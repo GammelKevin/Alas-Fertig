@@ -1,0 +1,20 @@
+# Sicherheitsanforderungen für Alas Restaurant
+# Diese Pakete ergänzen die bestehenden Abhängigkeiten, um die Sicherheit zu verbessern
+
+# Für Inhalts-Sanitierung
+bleach==5.0.1
+
+# Für MIME-Typ-Erkennung
+python-magic==0.4.27
+
+# Für erweiterte Bildvalidierung
+Pillow==9.4.0
+
+# Für zusätzliche Sicherheitsmaßnahmen bei HTTP-Anfragen
+secure==0.3.0
+
+# Für erweiterte Passwort-Hashing-Funktionen
+argon2-cffi==21.3.0
+
+# Für Schutz vor häufigen Sicherheitsbedrohungen
+flask-talisman==1.0.0 

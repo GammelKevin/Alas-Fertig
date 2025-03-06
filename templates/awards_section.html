@@ -1,0 +1,115 @@
+<!-- Awards Section -->
+<section class="awards-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Unsere Auszeichnungen</h2>
+        </div>
+        
+        <div class="awards-grid">
+            <div class="award-item">
+                <div class="award-image">
+                    <img src="{{ url_for('static', filename='img/awards/LDJ_Herr_Anastasios_Spathis_A41-1.png') }}" 
+                         alt="Top Gastronom">
+                </div>
+                <div class="award-info">
+                    <h3 class="award-title">Top Gastronom</h3>
+                    <a href="{{ url_for('static', filename='pdf/awards/LDJ Herr Anastasios Spathis A4.pdf') }}" 
+                       class="pdf-button" 
+                       target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF ansehen
+                    </a>
+                </div>
+            </div>
+
+            <div class="award-item">
+                <div class="award-image">
+                    <img src="{{ url_for('static', filename='img/awards/LDJ_Restaurant_Alas_A4-2.png') }}" 
+                         alt="Lokal des Jahres - Griechisch">
+                </div>
+                <div class="award-info">
+                    <h3 class="award-title">Lokal des Jahres - Griechisch</h3>
+                    <a href="{{ url_for('static', filename='pdf/awards/LDJ Restaurant Alas A4.pdf') }}" 
+                       class="pdf-button" 
+                       target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF ansehen
+                    </a>
+                </div>
+            </div>
+
+            <div class="award-item">
+                <div class="award-image">
+                    <img src="{{ url_for('static', filename='img/awards/SDG_Restaurant_Alas_A4-3.png') }}" 
+                         alt="Sterne der Gastronomie">
+                </div>
+                <div class="award-info">
+                    <h3 class="award-title">Sterne der Gastronomie <span class="gold-text">- Gold</span></h3>
+                    <a href="{{ url_for('static', filename='pdf/awards/SDG Restaurant Alas A4.pdf') }}" 
+                       class="pdf-button" 
+                       target="_blank">
+                        <i class="fas fa-file-pdf"></i> PDF ansehen
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="award-badge-wide">
+            <img src="{{ url_for('static', filename='img/awards/Lokal_Des_Jahres_Deutschland_2024_Bild.png') }}" 
+                 alt="Lokal des Jahres Deutschland 2024">
+        </div>
+        <div class="award-badge-wide no-bg-badge">
+            <img src="{{ url_for('static', filename='img/awards/badge-no-bg.png') }}" 
+                 alt="Lokal des Jahres Deutschland 2024 (ohne Hintergrund)"
+                 style="max-height: 400px; width: auto; display: block; margin: 0 auto;">
+        </div>
+
+        <div class="reviews-grid">
+            <div class="review-widget google-reviews">
+                <h3>Google Bewertungen</h3>
+                <!-- Elfsight Google Reviews Widget -->
+                <script src="https://static.elfsight.com/platform/platform.js" async></script>
+                <div class="elfsight-app-fca9f9e3-578f-4386-bba1-2b178ebf8cc1" data-elfsight-app-lazy></div>
+            </div>
+
+            <div class="review-widget tripadvisor-reviews">
+                <h3>Tripadvisor Bewertungen</h3>
+                <!-- Elfsight Tripadvisor Reviews Widget -->
+                <script src="https://static.elfsight.com/platform/platform.js" async></script>
+                <div class="elfsight-app-1ec5b87a-f98f-4a5d-87cb-50a8a3ae3eb8" data-elfsight-app-lazy></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.reviews-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+}
+
+.review-widget {
+    padding: 2rem;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.review-widget h3 {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+}
+
+.gold-text {
+    color: #FFD700;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .reviews-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>

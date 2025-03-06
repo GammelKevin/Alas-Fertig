@@ -1,0 +1,447 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-section">
+    <div class="page-header">
+        <div class="header-content">
+            <h2>Kategorien verwalten</h2>
+            <p class="subtitle">Hier können Sie Menü-Kategorien erstellen, bearbeiten und verwalten.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('admin_menu') }}" class="btn btn-back">
+                <i class="fas fa-arrow-left"></i> Zurück zum Menü
+            </a>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <h3>Neue Kategorie hinzufügen</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('admin_menu_category_add') }}" class="admin-form">
+                {{ form.csrf_token }}
+                <div class="form-group">
+                    <label for="name">Name (für URLs) *</label>
+                    <input type="text" id="name" name="name" required class="form-control" placeholder="z.B. vorspeisen">
+                    <small class="form-text">Dieser Name wird in URLs verwendet. Nur Kleinbuchstaben und Bindestriche.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="display_name">Anzeigename *</label>
+                    <input type="text" id="display_name" name="display_name" required class="form-control" placeholder="z.B. Vorspeisen">
+                    <small class="form-text">Dieser Name wird den Besuchern angezeigt.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="order">Reihenfolge</label>
+                    <input type="number" id="order" name="order" value="0" class="form-control">
+                    <small class="form-text">Bestimmt die Anzeigereihenfolge (0 = erste Position).</small>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Kategorie hinzufügen
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Bestehende Kategorien</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Anzeigename</th>
+                            <th>Reihenfolge</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.display_name }}</td>
+                            <td>{{ category.order }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button type="button" class="btn btn-edit" onclick="editCategory({{ category.id }}, '{{ category.name }}', '{{ category.display_name }}', {{ category.order }})" title="Bearbeiten">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <form method="POST" action="{{ url_for('admin_menu_category_delete', id=category.id) }}" style="display: inline;">
+                                        {{ form.csrf_token }}
+                                        <button type="submit" class="btn btn-delete" onclick="return confirm('Sind Sie sicher, dass Sie diese Kategorie löschen möchten?')" title="Löschen">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal für das Bearbeiten -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Kategorie bearbeiten</h2>
+            <button type="button" class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <form id="editForm" method="POST" action="">
+            {{ form.csrf_token }}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="edit_name">Name (für URLs) *</label>
+                    <input type="text" id="edit_name" name="name" required class="form-control">
+                    <small class="form-text">Dieser Name wird in URLs verwendet. Nur Kleinbuchstaben und Bindestriche.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_display_name">Anzeigename *</label>
+                    <input type="text" id="edit_display_name" name="display_name" required class="form-control">
+                    <small class="form-text">Dieser Name wird den Besuchern angezeigt.</small>
+                </div>
+                
+                <div class="form-group">
+                    <label for="edit_order">Reihenfolge</label>
+                    <input type="number" id="edit_order" name="order" class="form-control">
+                    <small class="form-text">Bestimmt die Anzeigereihenfolge (0 = erste Position).</small>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Speichern
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Abbrechen
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+:root {
+    --primary-color: #c17817;
+    --secondary-color: #f8f9fa;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #212529;
+    --dark-color: #343a40;
+    --border-color: #dee2e6;
+    --card-bg: #ffffff;
+    --modal-bg: #ffffff;
+}
+
+.admin-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--primary-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.page-header .header-content {
+    flex: 1;
+}
+
+.page-header .header-actions {
+    padding-top: 0.5rem;
+}
+
+.page-header h2 {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: var(--light-color);
+    opacity: 0.8;
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+}
+
+.card-header {
+    background: var(--secondary-color);
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.card-header h3 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background: #ffffff;
+    color: var(--light-color);
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(193, 120, 23, 0.2);
+    outline: none;
+}
+
+.form-text {
+    color: #6c757d;
+    opacity: 1;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.table th {
+    background: var(--secondary-color);
+    color: var(--light-color);
+    font-weight: 600;
+    padding: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--light-color);
+}
+
+.table tr:hover {
+    background: var(--secondary-color);
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #a66615;
+}
+
+.btn-edit {
+    background: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+    padding: 0.5rem;
+}
+
+.btn-delete {
+    background: rgba(231, 76, 60, 0.1);
+    color: #dc3545;
+    padding: 0.5rem;
+}
+
+.btn-edit:hover, .btn-delete:hover {
+    transform: translateY(-1px);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    position: relative;
+    background: var(--modal-bg);
+    width: 90%;
+    max-width: 600px;
+    margin: 2rem auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--light-color);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.mt-4 {
+    margin-top: 2rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    .admin-section {
+        padding: 10px;
+    }
+    
+    .card-header, .card-body {
+        padding: 1rem;
+    }
+    
+    .btn {
+        padding: 0.5rem 1rem;
+    }
+    
+    .table th, .table td {
+        padding: 0.75rem;
+    }
+    
+    .modal-content {
+        margin: 1rem;
+        width: calc(100% - 2rem);
+    }
+}
+
+.btn-back {
+    background: var(--secondary-color);
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn-back:hover {
+    background: var(--primary-color);
+    color: white;
+}
+</style>
+
+<script>
+function editCategory(id, name, display_name, order) {
+    const modal = document.getElementById('editModal');
+    const form = document.getElementById('editForm');
+    const nameInput = document.getElementById('edit_name');
+    const displayNameInput = document.getElementById('edit_display_name');
+    const orderInput = document.getElementById('edit_order');
+    
+    form.action = `/admin/menu/category/edit/${id}`;
+    nameInput.value = name;
+    displayNameInput.value = display_name;
+    orderInput.value = order;
+    
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    const modal = document.getElementById('editModal');
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Schließe Modal wenn außerhalb geklickt wird
+window.onclick = function(event) {
+    const modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
+</script>
+{% endblock %}

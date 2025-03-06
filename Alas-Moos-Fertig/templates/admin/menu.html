@@ -1,0 +1,774 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Menüpunkte verwalten</h1>
+        <button class="btn btn-add" onclick="document.getElementById('addModal').style.display='block'">
+            <i class="fas fa-plus"></i> Neuer Menüpunkt
+        </button>
+    </div>
+
+    <div class="add-item-section">
+        <h2>Neuen Menüpunkt hinzufügen</h2>
+        <form action="{{ url_for('admin_menu_add') }}" method="POST" enctype="multipart/form-data" class="add-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Name*</label>
+                    <input type="text" id="name" name="name" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Preis (€)*</label>
+                    <input type="number" id="price" name="price" step="0.10" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Kategorie*</label>
+                    <select id="category" name="category" required class="form-control">
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Beschreibung</label>
+                <textarea id="description" name="description" class="form-control"></textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="image">Bild</label>
+                    <input type="file" id="image" name="image" accept="image/*" class="form-control-file">
+                    <small class="form-text text-muted">Bilder werden automatisch auf 400x180 Pixel zugeschnitten</small>
+                    <div class="mt-2">
+                        <button type="button" class="btn btn-sm btn-danger" onclick="clearFileInput('image')">
+                            <i class="fas fa-trash"></i> Datei/Bild entfernen
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group checkbox-group">
+                    <div class="form-check">
+                        <input type="checkbox" id="vegetarian" name="vegetarian" class="form-check-input">
+                        <label for="vegetarian" class="form-check-label">Vegetarisch 🥬</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="vegan" name="vegan" class="form-check-input">
+                        <label for="vegan" class="form-check-label">Vegan 🌱</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="spicy" name="spicy" class="form-check-input">
+                        <label for="spicy" class="form-check-label">Scharf 🌶️</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="gluten_free" name="gluten_free" class="form-check-input">
+                        <label for="gluten_free" class="form-check-label">Glutenfrei 🌾</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="lactose_free" name="lactose_free" class="form-check-input">
+                        <label for="lactose_free" class="form-check-label">Laktosefrei 🥛</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="kid_friendly" name="kid_friendly" class="form-check-input">
+                        <label for="kid_friendly" class="form-check-label">Kinderfreundlich 👶</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="alcohol_free" name="alcohol_free" class="form-check-input">
+                        <label for="alcohol_free" class="form-check-label">Alkoholfrei 🚫</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="contains_alcohol" name="contains_alcohol" class="form-check-input">
+                        <label for="contains_alcohol" class="form-check-label">Alkoholisch 🍷</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="homemade" name="homemade" class="form-check-input">
+                        <label for="homemade" class="form-check-label">Hausgemacht 🏠</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="sugar_free" name="sugar_free" class="form-check-input">
+                        <label for="sugar_free" class="form-check-label">Zuckerfrei 🍯</label>
+                    </div>
+                    <div class="form-check">
+                        <input type="checkbox" id="recommended" name="recommended" class="form-check-input">
+                        <label for="recommended" class="form-check-label">Empfohlen ⭐</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Hinzufügen</button>
+            </div>
+        </form>
+    </div>
+
+    {% for category in categories %}
+        {% if not category.is_drink_category %}
+            <div class="category-section">
+                <div class="category-header">
+                    <h2>{{ category.display_name }}</h2>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Suchen..." 
+                               onkeyup="filterItems(this, '{{ category.id }}')"
+                               aria-label="Suche in {{ category.display_name }}">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                <div class="table-container" data-category="{{ category.id }}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Beschreibung</th>
+                                <th>Preis</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in menu_items %}
+                                {% if item.category_id == category.id %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td class="description-cell">
+                                            <div class="description-wrapper">
+                                                <span class="full-description">{{ item.description }}</span>
+                                                <span class="truncated-description">{{ item.description }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="price-cell">{{ "%.2f"|format(item.price) }} €</td>
+                                        <td class="actions-cell">
+                                            <button class="btn btn-edit" onclick="editItem('{{ item.id }}')" title="Bearbeiten">
+                                                <i class="fas fa-edit"></i>
+                                                <span class="btn-text">Bearbeiten</span>
+                                            </button>
+                                            <button class="btn btn-delete" onclick="deleteItem('{{ item.id }}')" title="Löschen">
+                                                <i class="fas fa-trash"></i>
+                                                <span class="btn-text">Löschen</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+
+    {% for category in categories %}
+        {% if category.is_drink_category %}
+            <div class="category-section">
+                <div class="category-header">
+                    <h2>{{ category.display_name }}</h2>
+                    <div class="search-container">
+                        <input type="text" class="search-input" placeholder="Suchen..." 
+                               onkeyup="filterItems(this, '{{ category.id }}')"
+                               aria-label="Suche in {{ category.display_name }}">
+                        <i class="fas fa-search search-icon"></i>
+                    </div>
+                </div>
+                <div class="table-container" data-category="{{ category.id }}">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Beschreibung</th>
+                                <th>Preis</th>
+                                <th>Aktionen</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in menu_items %}
+                                {% if item.category_id == category.id %}
+                                    <tr>
+                                        <td>{{ item.name }}</td>
+                                        <td class="description-cell">
+                                            <div class="description-wrapper">
+                                                <span class="full-description">{{ item.description }}</span>
+                                                <span class="truncated-description">{{ item.description }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="price-cell">{{ "%.2f"|format(item.price) }} €</td>
+                                        <td class="actions-cell">
+                                            <button class="btn btn-edit" onclick="editItem('{{ item.id }}')" title="Bearbeiten">
+                                                <i class="fas fa-edit"></i>
+                                                <span class="btn-text">Bearbeiten</span>
+                                            </button>
+                                            <button class="btn btn-delete" onclick="deleteItem('{{ item.id }}')" title="Löschen">
+                                                <i class="fas fa-trash"></i>
+                                                <span class="btn-text">Löschen</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<!-- Edit Modal -->
+<div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Menüpunkt bearbeiten</h2>
+        <form id="editForm" method="POST" action="{{ url_for('admin_menu_edit_post') }}" enctype="multipart/form-data">
+            <input type="hidden" id="edit-id" name="id">
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="edit-name">Name*</label>
+                    <input type="text" id="edit-name" name="name" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-price">Preis (€)*</label>
+                    <input type="number" id="edit-price" name="price" step="0.10" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit-category">Kategorie*</label>
+                    <select id="edit-category" name="category" required class="form-control">
+                        {% for category in categories %}
+                            <option value="{{ category.id }}">{{ category.display_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-description">Beschreibung</label>
+                <textarea id="edit-description" name="description" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="edit-image">Bild</label>
+                <input type="file" id="edit-image" name="image" accept="image/*" class="form-control-file">
+                <small class="form-text text-muted">Bilder werden automatisch auf 400x180 Pixel zugeschnitten</small>
+                <div class="mt-2">
+                    <button type="button" class="btn btn-sm btn-danger" onclick="clearFileInput('edit-image')">
+                        <i class="fas fa-trash"></i> Datei/Bild entfernen
+                    </button>
+                    <input type="hidden" name="remove_image" id="remove-image" value="false">
+                    <button type="button" class="btn btn-sm btn-warning ml-2" onclick="toggleRemoveImage()" id="remove-existing-image">
+                        <i class="fas fa-trash-alt"></i> Bestehendes Bild entfernen
+                    </button>
+                </div>
+            </div>
+
+            <div class="checkbox-group">
+                <div class="form-check">
+                    <input type="checkbox" id="edit-vegetarian" name="vegetarian" class="form-check-input">
+                    <label for="edit-vegetarian" class="form-check-label">Vegetarisch 🥬</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-vegan" name="vegan" class="form-check-input">
+                    <label for="edit-vegan" class="form-check-label">Vegan 🌱</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-spicy" name="spicy" class="form-check-input">
+                    <label for="edit-spicy" class="form-check-label">Scharf 🌶️</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-gluten_free" name="gluten_free" class="form-check-input">
+                    <label for="edit-gluten_free" class="form-check-label">Glutenfrei 🌾</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-lactose_free" name="lactose_free" class="form-check-input">
+                    <label for="edit-lactose_free" class="form-check-label">Laktosefrei 🥛</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-kid_friendly" name="kid_friendly" class="form-check-input">
+                    <label for="edit-kid_friendly" class="form-check-label">Kinderfreundlich 👶</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-alcohol_free" name="alcohol_free" class="form-check-input">
+                    <label for="edit-alcohol_free" class="form-check-label">Alkoholfrei 🚫</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-contains_alcohol" name="contains_alcohol" class="form-check-input">
+                    <label for="edit-contains_alcohol" class="form-check-label">Alkoholisch 🍷</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-homemade" name="homemade" class="form-check-input">
+                    <label for="edit-homemade" class="form-check-label">Hausgemacht 🏠</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-sugar_free" name="sugar_free" class="form-check-input">
+                    <label for="edit-sugar_free" class="form-check-label">Zuckerfrei 🍯</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="edit-recommended" name="recommended" class="form-check-input">
+                    <label for="edit-recommended" class="form-check-label">Empfohlen ⭐</label>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-edit">Speichern</button>
+                <button type="button" class="btn btn-delete" onclick="document.getElementById('editModal').style.display='none'">Abbrechen</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.admin-header h1 {
+    margin: 0;
+    color: #2c3e50;
+    font-size: 2em;
+    font-weight: 600;
+}
+
+.category-section {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.search-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.search-input {
+    padding: 0.5rem;
+    padding-right: 2.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    width: 200px;
+}
+
+.search-icon {
+    position: absolute;
+    right: 10px;
+    color: #666;
+}
+
+.category-section h2 {
+    color: #2c3e50;
+    margin: 0 0 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e67e22;
+    font-size: 1.5em;
+}
+
+/* Verbesserte Tabellen-Styles */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 8px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+/* Spaltenbreiten definieren */
+table th:nth-child(1), /* Name */
+table td:nth-child(1) {
+    width: 20%;
+    min-width: 150px;
+}
+
+table th:nth-child(2), /* Beschreibung */
+table td:nth-child(2) {
+    width: 50%;
+    min-width: 200px;
+}
+
+table th:nth-child(3), /* Preis */
+table td:nth-child(3) {
+    width: 15%;
+    min-width: 100px;
+    text-align: right;
+}
+
+table th:nth-child(4), /* Aktionen */
+table td:nth-child(4) {
+    width: 15%;
+    min-width: 180px;
+    text-align: right;
+}
+
+/* Beschreibungszelle */
+.description-cell {
+    position: relative;
+    padding: 12px;
+}
+
+.description-wrapper {
+    position: relative;
+}
+
+.truncated-description {
+    display: block;
+    max-height: 2.8em; /* 2 Zeilen */
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.full-description {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 100%;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    max-width: 400px;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.description-wrapper:hover .full-description {
+    display: block;
+}
+
+.description-wrapper:hover .truncated-description {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Button Styles */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    font-size: 0.9em;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    gap: 6px;
+    min-width: 32px;
+    color: white;
+    text-decoration: none;
+}
+
+.btn i {
+    font-size: 0.9em;
+}
+
+.btn-text {
+    display: inline;
+}
+
+.btn-edit {
+    background-color: #3498db;
+}
+
+.btn-edit:hover {
+    background-color: #2980b9;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.actions-cell {
+    white-space: nowrap;
+    text-align: right;
+}
+
+.actions-cell .btn {
+    margin-left: 4px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .category-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-container {
+        width: 100%;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .btn {
+        padding: 6px;
+        min-width: 28px;
+    }
+    
+    .btn i {
+        margin: 0;
+        font-size: 0.9em;
+    }
+    
+    .actions-cell .btn {
+        padding: 6px;
+    }
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    overflow-y: auto;
+}
+
+.modal-content {
+    position: relative;
+    background-color: white;
+    margin: 20px auto;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 800px;
+    width: 90%;
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    transition: color 0.3s ease;
+}
+
+.close:hover {
+    color: #e74c3c;
+}
+
+/* Checkbox-Gruppe im Modal */
+.checkbox-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin: 15px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid #e9ecef;
+}
+
+.form-check-input {
+    width: 18px;
+    height: 18px;
+    margin: 0;
+}
+
+.form-check-label {
+    margin: 0;
+    font-size: 0.9em;
+    color: #2c3e50;
+}
+
+.ml-2 {
+    margin-left: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    border-radius: 0.2rem;
+}
+</style>
+
+<script>
+function editItem(itemId) {
+    fetch('/admin/menu/edit/' + itemId)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('edit-id').value = data.id;
+            document.getElementById('edit-name').value = data.name;
+            document.getElementById('edit-description').value = data.description || '';
+            document.getElementById('edit-price').value = data.price;
+            document.getElementById('edit-category').value = data.category_id;
+            
+            // Reset the remove image state
+            document.getElementById('remove-image').value = 'false';
+            const removeButton = document.getElementById('remove-existing-image');
+            removeButton.classList.remove('btn-danger');
+            removeButton.classList.add('btn-warning');
+            removeButton.innerHTML = '<i class="fas fa-trash-alt"></i> Bestehendes Bild entfernen';
+            
+            // Show/hide the remove existing image button based on whether there is an image
+            removeButton.style.display = data.image_path ? 'inline-block' : 'none';
+            
+            // Set all checkboxes
+            document.getElementById('edit-vegetarian').checked = data.vegetarian;
+            document.getElementById('edit-vegan').checked = data.vegan;
+            document.getElementById('edit-spicy').checked = data.spicy;
+            document.getElementById('edit-gluten_free').checked = data.gluten_free;
+            document.getElementById('edit-lactose_free').checked = data.lactose_free;
+            document.getElementById('edit-kid_friendly').checked = data.kid_friendly;
+            document.getElementById('edit-alcohol_free').checked = data.alcohol_free;
+            document.getElementById('edit-contains_alcohol').checked = data.contains_alcohol;
+            document.getElementById('edit-homemade').checked = data.homemade;
+            document.getElementById('edit-sugar_free').checked = data.sugar_free;
+            document.getElementById('edit-recommended').checked = data.recommended;
+            
+            document.getElementById('editModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fehler beim Laden der Menüpunkt-Daten');
+        });
+}
+
+// Modal schließen
+document.querySelector('.close').onclick = function() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Modal schließen wenn außerhalb geklickt wird
+window.onclick = function(event) {
+    var modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Tooltips für Buttons auf mobilen Geräten
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(btn => {
+        const title = btn.getAttribute('title');
+        if (title) {
+            btn.addEventListener('touchstart', function(e) {
+                const tooltip = document.createElement('div');
+                tooltip.className = 'tooltip';
+                tooltip.textContent = title;
+                tooltip.style.position = 'absolute';
+                tooltip.style.top = (e.touches[0].pageY - 40) + 'px';
+                tooltip.style.left = (e.touches[0].pageX - 20) + 'px';
+                document.body.appendChild(tooltip);
+                
+                setTimeout(() => {
+                    tooltip.remove();
+                }, 1000);
+            });
+        }
+    });
+});
+
+// Löschen-Funktion mit Bestätigung
+function deleteItem(id) {
+    if (confirm('Sind Sie sicher, dass Sie diesen Menüpunkt löschen möchten?')) {
+        window.location.href = '/admin/menu/delete/' + id;
+    }
+}
+
+function filterItems(input, categoryId) {
+    const searchText = input.value.toLowerCase();
+    const container = document.querySelector(`.table-container[data-category="${categoryId}"]`);
+    const items = container.getElementsByTagName('tr');
+    
+    for (let i = 1; i < items.length; i++) { // Start from 1 to skip header row
+        const nameCell = items[i].getElementsByTagName('td')[0];
+        const descriptionCell = items[i].getElementsByTagName('td')[1];
+        
+        if (nameCell || descriptionCell) {
+            const name = nameCell.textContent || nameCell.innerText;
+            const description = descriptionCell.textContent || descriptionCell.innerText;
+            const matchesSearch = name.toLowerCase().includes(searchText) || 
+                                description.toLowerCase().includes(searchText);
+            
+            items[i].style.display = matchesSearch ? '' : 'none';
+        }
+    }
+}
+
+function clearFileInput(inputId) {
+    const fileInput = document.getElementById(inputId);
+    fileInput.value = '';
+}
+
+function toggleRemoveImage() {
+    const removeImageInput = document.getElementById('remove-image');
+    const button = document.getElementById('remove-existing-image');
+    
+    if (removeImageInput.value === 'false') {
+        removeImageInput.value = 'true';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-danger');
+        button.innerHTML = '<i class="fas fa-undo"></i> Bild behalten';
+    } else {
+        removeImageInput.value = 'false';
+        button.classList.remove('btn-danger');
+        button.classList.add('btn-warning');
+        button.innerHTML = '<i class="fas fa-trash-alt"></i> Bestehendes Bild entfernen';
+    }
+}
+</script>
+
+{% endblock %}

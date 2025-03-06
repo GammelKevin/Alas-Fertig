@@ -1,0 +1,115 @@
+{% extends "admin/base.html" %}
+
+{% block header %}Öffnungszeiten verwalten{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <form action="{{ url_for('admin_save_hours') }}" method="POST">
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Tag</th>
+                                <th>Geschlossen?</th>
+                                <th>Erste Öffnungszeit</th>
+                                <th>Erste Schließzeit</th>
+                                <th>Zweite Öffnungszeit</th>
+                                <th>Zweite Schließzeit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for hour in opening_hours %}
+                            <tr>
+                                <td>{{ hour.day }}</td>
+                                <td>
+                                    <div class="form-check">
+                                        <input type="checkbox" 
+                                               class="form-check-input" 
+                                               id="{{ hour.day }}_closed" 
+                                               name="{{ hour.day }}_closed"
+                                               {% if hour.closed %}checked{% endif %}
+                                               onchange="toggleTimeInputs(this, '{{ hour.day }}')">
+                                        <label class="form-check-label" for="{{ hour.day }}_closed">
+                                            Geschlossen
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="time" 
+                                           class="form-control" 
+                                           id="{{ hour.day }}_open_1" 
+                                           name="{{ hour.day }}_open_1"
+                                           value="{{ hour.open_time_1 }}"
+                                           {% if hour.closed %}disabled{% endif %}>
+                                </td>
+                                <td>
+                                    <input type="time" 
+                                           class="form-control" 
+                                           id="{{ hour.day }}_close_1" 
+                                           name="{{ hour.day }}_close_1"
+                                           value="{{ hour.close_time_1 }}"
+                                           {% if hour.closed %}disabled{% endif %}>
+                                </td>
+                                <td>
+                                    <input type="time" 
+                                           class="form-control" 
+                                           id="{{ hour.day }}_open_2" 
+                                           name="{{ hour.day }}_open_2"
+                                           value="{{ hour.open_time_2 }}"
+                                           {% if hour.closed %}disabled{% endif %}>
+                                </td>
+                                <td>
+                                    <input type="time" 
+                                           class="form-control" 
+                                           id="{{ hour.day }}_close_2" 
+                                           name="{{ hour.day }}_close_2"
+                                           value="{{ hour.close_time_2 }}"
+                                           {% if hour.closed %}disabled{% endif %}>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-end mt-4">
+                    <button type="submit" class="btn btn-primary">Öffnungszeiten speichern</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleTimeInputs(checkbox, day) {
+    const inputs = [
+        document.getElementById(`${day}_open_1`),
+        document.getElementById(`${day}_close_1`),
+        document.getElementById(`${day}_open_2`),
+        document.getElementById(`${day}_close_2`)
+    ];
+    
+    inputs.forEach(input => {
+        input.disabled = checkbox.checked;
+        if (checkbox.checked) {
+            input.value = '';
+        }
+    });
+}
+</script>
+
+<style>
+.form-check {
+    margin: 0;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+input[type="time"] {
+    max-width: 150px;
+}
+</style>
+{% endblock %}

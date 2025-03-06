@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - Alas Moos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">
+                    <i class="fas fa-calendar"></i>
+                </div>
+                <h2>Alas Moos</h2>
+            </div>
+            <ul class="nav-links">
+                <li>
+                    <a href="{{ url_for('admin.index') }}" class="nav-link {% if request.endpoint == 'admin.index' %}active{% endif %}">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_speisekarte') }}" class="nav-link {% if request.endpoint == 'admin_speisekarte' %}active{% endif %}">
+                        <i class="fas fa-utensils"></i> Speisekarte
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_categories') }}" class="nav-link {% if request.endpoint == 'admin_categories' %}active{% endif %}">
+                        <i class="fas fa-list"></i> Kategorien
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin.opening_hours') }}" class="nav-link {% if request.endpoint == 'admin.opening_hours' %}active{% endif %}">
+                        <i class="fas fa-clock"></i> Öffnungszeiten
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin_galerie') }}" class="nav-link {% if request.endpoint == 'admin_galerie' %}active{% endif %}">
+                        <i class="fas fa-images"></i> Galerie
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('admin.statistics') }}" class="nav-link {% if request.endpoint == 'admin.statistics' %}active{% endif %}">
+                        <i class="fas fa-chart-bar"></i> Statistiken
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ url_for('index') }}" class="nav-link">
+                        <i class="fas fa-arrow-circle-left"></i>
+                        Zurück zur Website
+                    </a>
+                </li>
+                <li class="logout-link">
+                    <a href="{{ url_for('logout') }}" class="nav-link danger">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Ausloggen
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            {% if request.endpoint != 'admin.index' %}
+            <div class="top-bar">
+                <a href="{{ url_for('admin.index') }}" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    Zurück zum Dashboard
+                </a>
+            </div>
+            {% endif %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+<style>
+/* Basis-Layout */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f6fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.admin-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #1e1e2d;
+    color: #9899ac;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    gap: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.logo-icon {
+    width: 35px;
+    height: 35px;
+    background-color: #e67e22;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+}
+
+.sidebar-header h2 {
+    color: white;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+
+/* Navigation Links */
+.nav-links {
+    list-style: none;
+    padding: 15px 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 12px 25px;
+    color: #9899ac;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+}
+
+.nav-link i {
+    width: 20px;
+    margin-right: 12px;
+    font-size: 1.1em;
+    text-align: center;
+}
+
+.nav-link:hover {
+    color: white;
+    background-color: rgba(255,255,255,0.1);
+}
+
+.nav-link.active {
+    color: #e67e22;
+    background-color: rgba(230, 126, 34, 0.1);
+}
+
+.logout-link {
+    margin-top: auto;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+}
+
+.nav-link.danger {
+    color: #ff4757;
+}
+
+.nav-link.danger:hover {
+    color: #ff6b81;
+    background-color: rgba(255, 71, 87, 0.1);
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f5f6fa;
+}
+
+/* Alerts */
+.alert {
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+</style>
+</body>
+</html>

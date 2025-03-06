@@ -1,0 +1,109 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Öffnungszeiten verwalten</h2>
+    
+    <div class="card">
+        <div class="card-body">
+            <form id="opening-hours-form">
+                {% for hours in opening_hours %}
+                <div class="row mb-3 opening-hours-row" data-day="{{ hours.day }}">
+                    <div class="col-md-2">
+                        <label class="form-label">{{ hours.day }}</label>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input closed-checkbox" 
+                                   id="closed_{{ hours.day }}" 
+                                   {% if hours.closed %}checked{% endif %}>
+                            <label class="form-check-label" for="closed_{{ hours.day }}">
+                                Geschlossen
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 time-inputs" {% if hours.closed %}style="display: none;"{% endif %}>
+                        <div class="input-group">
+                            <input type="time" class="form-control open-time" 
+                                   value="{{ hours.open_time or '' }}"
+                                   {% if hours.closed %}disabled{% endif %}>
+                            <span class="input-group-text">bis</span>
+                            <input type="time" class="form-control close-time" 
+                                   value="{{ hours.close_time or '' }}"
+                                   {% if hours.closed %}disabled{% endif %}>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                
+                <div class="row mt-4">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary">Speichern</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Event-Listener für Geschlossen-Checkboxen
+    document.querySelectorAll('.closed-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const row = this.closest('.opening-hours-row');
+            const timeInputs = row.querySelector('.time-inputs');
+            const inputs = timeInputs.querySelectorAll('input');
+            
+            if (this.checked) {
+                timeInputs.style.display = 'none';
+                inputs.forEach(input => input.disabled = true);
+            } else {
+                timeInputs.style.display = '';
+                inputs.forEach(input => input.disabled = false);
+            }
+        });
+    });
+    
+    // Formular-Submit-Handler
+    document.getElementById('opening-hours-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const data = [];
+        document.querySelectorAll('.opening-hours-row').forEach(row => {
+            const day = row.dataset.day;
+            const closed = row.querySelector('.closed-checkbox').checked;
+            const openTime = row.querySelector('.open-time').value;
+            const closeTime = row.querySelector('.close-time').value;
+            
+            data.push({
+                day: day,
+                closed: closed,
+                openTime: closed ? null : openTime,
+                closeTime: closed ? null : closeTime
+            });
+        });
+        
+        fetch('/admin/opening-hours/save', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Öffnungszeiten wurden erfolgreich gespeichert!');
+            } else {
+                alert('Fehler beim Speichern der Öffnungszeiten: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+        });
+    });
+});
+</script>
+{% endblock %}

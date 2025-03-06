@@ -1,0 +1,269 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Öffnungszeiten{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Öffnungszeiten verwalten</h1>
+    
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tag</th>
+                    <th>Status</th>
+                    <th>Erste Öffnungszeit</th>
+                    <th>Zweite Öffnungszeit</th>
+                    <th>Aktionen</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hour in opening_hours %}
+                <tr>
+                    <td>{{ hour.day }}</td>
+                    <td>
+                        {% if hour.vacation_active %}
+                            Urlaub ({{ hour.vacation_start }} - {{ hour.vacation_end }})
+                        {% elif hour.closed %}
+                            Geschlossen
+                        {% else %}
+                            Geöffnet
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not hour.vacation_active and not hour.closed %}
+                            {% if hour.open_time_1 and hour.close_time_1 %}
+                                {{ hour.open_time_1 }} - {{ hour.close_time_1 }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not hour.vacation_active and not hour.closed %}
+                            {% if hour.open_time_2 and hour.close_time_2 %}
+                                {{ hour.open_time_2 }} - {{ hour.close_time_2 }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="editOpeningHours({{ hour.id }})">
+                            <i class="fas fa-edit"></i> Bearbeiten
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteOpeningHours({{ hour.id }})">
+                            <i class="fas fa-trash"></i> Löschen
+                        </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Bestätigung</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Möchten Sie diesen Eintrag wirklich löschen?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">Löschen</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Öffnungszeiten bearbeiten</h5>
+                <button type="button" class="close" data-dismiss="modal">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editId">
+                    {{ form.csrf_token }}
+                    
+                    <div class="form-group">
+                        <label for="editDay">Tag</label>
+                        <select class="form-control" id="editDay" name="day" required>
+                            <option value="Montag">Montag</option>
+                            <option value="Dienstag">Dienstag</option>
+                            <option value="Mittwoch">Mittwoch</option>
+                            <option value="Donnerstag">Donnerstag</option>
+                            <option value="Freitag">Freitag</option>
+                            <option value="Samstag">Samstag</option>
+                            <option value="Sonntag">Sonntag</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="editVacation" name="vacation_active">
+                            <label class="custom-control-label" for="editVacation">Urlaub</label>
+                        </div>
+                    </div>
+
+                    <div id="vacationDates" style="display: none;">
+                        <div class="form-group">
+                            <label for="editVacationStart">Urlaubsbeginn</label>
+                            <input type="date" class="form-control" id="editVacationStart" name="vacation_start">
+                        </div>
+                        <div class="form-group">
+                            <label for="editVacationEnd">Urlaubsende</label>
+                            <input type="date" class="form-control" id="editVacationEnd" name="vacation_end">
+                        </div>
+                    </div>
+
+                    <div id="regularHours">
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="editClosed" name="closed">
+                                <label class="custom-control-label" for="editClosed">Geschlossen</label>
+                            </div>
+                        </div>
+
+                        <div id="timeFields">
+                            <div class="form-group">
+                                <label>Erste Öffnungszeit</label>
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="time" class="form-control" id="editOpenTime1" name="open_time_1">
+                                    </div>
+                                    <div class="col">
+                                        <input type="time" class="form-control" id="editCloseTime1" name="close_time_1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Zweite Öffnungszeit (optional)</label>
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="time" class="form-control" id="editOpenTime2" name="open_time_2">
+                                    </div>
+                                    <div class="col">
+                                        <input type="time" class="form-control" id="editCloseTime2" name="close_time_2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-primary" onclick="saveChanges()">Speichern</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    // Handle vacation checkbox
+    $('#editVacation').change(function() {
+        if ($(this).is(':checked')) {
+            $('#vacationDates').show();
+            $('#regularHours').hide();
+            // Clear regular hours fields
+            $('#editClosed').prop('checked', false);
+            $('#editOpenTime1, #editCloseTime1, #editOpenTime2, #editCloseTime2').val('');
+        } else {
+            $('#vacationDates').hide();
+            $('#regularHours').show();
+        }
+    });
+
+    // Handle closed checkbox
+    $('#editClosed').change(function() {
+        if ($(this).is(':checked')) {
+            $('#timeFields').hide();
+            // Clear time fields
+            $('#editOpenTime1, #editCloseTime1, #editOpenTime2, #editCloseTime2').val('');
+        } else {
+            $('#timeFields').show();
+        }
+    });
+});
+
+function editOpeningHours(id) {
+    $.get('/admin/opening-hours/edit/' + id, function(data) {
+        $('#editId').val(data.id);
+        $('#editDay').val(data.day);
+        $('#editVacation').prop('checked', data.vacation_active).trigger('change');
+        $('#editVacationStart').val(data.vacation_start);
+        $('#editVacationEnd').val(data.vacation_end);
+        $('#editClosed').prop('checked', data.closed).trigger('change');
+        $('#editOpenTime1').val(data.open_time_1);
+        $('#editCloseTime1').val(data.close_time_1);
+        $('#editOpenTime2').val(data.open_time_2);
+        $('#editCloseTime2').val(data.close_time_2);
+        $('#editModal').modal('show');
+    });
+}
+
+let deleteId = null;
+
+function deleteOpeningHours(id) {
+    deleteId = id;
+    $('#deleteModal').modal('show');
+}
+
+function confirmDelete() {
+    if (deleteId === null) return;
+    
+    $.ajax({
+        url: '/admin/opening-hours/delete/' + deleteId,
+        method: 'POST',
+        data: {
+            csrf_token: $('input[name=csrf_token]').val()
+        },
+        success: function(response) {
+            $('#deleteModal').modal('hide');
+            location.reload();
+        },
+        error: function(xhr) {
+            var error = xhr.responseJSON ? xhr.responseJSON.error : 'Ein Fehler ist aufgetreten.';
+            alert(error);
+        }
+    });
+}
+
+function saveChanges() {
+    var formData = new FormData($('#editForm')[0]);
+    var id = $('#editId').val();
+
+    $.ajax({
+        url: '/admin/opening-hours/edit/' + id,
+        method: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function(response) {
+            $('#editModal').modal('hide');
+            location.reload();
+        },
+        error: function(xhr) {
+            var error = xhr.responseJSON ? xhr.responseJSON.error : 'Ein Fehler ist aufgetreten.';
+            alert(error);
+        }
+    });
+}
+</script>
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

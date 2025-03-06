@@ -1,0 +1,522 @@
+{% extends "admin/base.html" %}
+
+{% block header %}Kategorien verwalten{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Neue Kategorie hinzufügen -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Neue Kategorie hinzufügen</h5>
+            <form action="{{ url_for('admin_categories_add') }}" method="POST">
+                {{ form.csrf_token }}
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="name" class="form-label">URL-Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <small class="text-muted">z.B. "vorspeisen" (keine Leerzeichen/Sonderzeichen)</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="display_name" class="form-label">Anzeigename</label>
+                        <input type="text" class="form-control" id="display_name" name="display_name" required>
+                        <small class="text-muted">z.B. "Vorspeisen"</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="form-check mt-4">
+                            <input type="checkbox" class="form-check-input" id="is_drink_category" name="is_drink_category">
+                            <label class="form-check-label" for="is_drink_category">Getränke-Kategorie?</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Kategorie hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bestehende Kategorien -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Bestehende Kategorien</h5>
+            <p class="text-muted mb-3">
+                <i class="bi bi-info-circle"></i> 
+                Ziehen Sie die Kategorien mit der Maus per Drag & Drop, um die Reihenfolge anzupassen.
+            </p>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th style="width: 40px;"></th>
+                            <th>URL-Name</th>
+                            <th>Anzeigename</th>
+                            <th>Typ</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sortable-categories">
+                        {% for category in categories %}
+                        <tr data-id="{{ category.id }}" class="sortable-item" id="category-{{ category.id }}">
+                            <td class="drag-handle text-center">
+                                <i class="bi bi-grip-vertical"></i>
+                            </td>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.display_name }}</td>
+                            <td>
+                                {% if category.is_drink_category %}
+                                <span class="badge bg-info">Getränke</span>
+                                {% else %}
+                                <span class="badge bg-success">Speisen</span>
+                                {% endif %}
+                            </td>
+                            <td class="actions-cell">
+                                <button class="btn btn-primary btn-sm edit-btn" data-id="{{ category.id }}">
+                                    <i class="bi bi-pencil"></i>
+                                </button>
+                                <form action="{{ url_for('admin_categories_delete', id=category.id) }}" method="POST" class="d-inline">
+                                    {{ form.csrf_token }}
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Wirklich löschen? Alle Menüeinträge in dieser Kategorie werden ebenfalls gelöscht!')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal für das Bearbeiten einer Kategorie -->
+<div class="modal" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Kategorie bearbeiten</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-form" action="#" method="POST">
+                    {{ form.csrf_token }}
+                    <input type="hidden" id="edit-id" name="edit-id">
+                    <div class="form-group mb-3">
+                        <label for="edit-name">URL-Name</label>
+                        <input type="text" class="form-control" id="edit-name" name="edit-name" required>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="edit-display_name">Anzeigename</label>
+                        <input type="text" class="form-control" id="edit-display_name" name="edit-display_name" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="edit-is_drink_category" name="edit-is_drink_category">
+                        <label class="form-check-label" for="edit-is_drink_category">Getränke-Kategorie?</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Speichern</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-check {
+    padding-top: 2rem;
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.7em;
+}
+
+.btn-danger {
+    padding: 0.25rem 0.5rem;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 10% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 8px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+}
+
+/* Drag and drop styles */
+.sortable-item {
+    cursor: move;
+}
+
+.sortable-item.dragging {
+    background-color: #f8f9fa;
+    opacity: 0.8;
+}
+
+.drag-handle {
+    cursor: grab;
+    color: #999;
+    font-size: 1.2em;
+}
+
+.drag-handle:hover {
+    color: #666;
+}
+
+.sortable-ghost {
+    background-color: #f0f0f0;
+    opacity: 0.5;
+}
+
+.btn-primary.btn-sm, .btn-danger.btn-sm {
+    min-width: 38px;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    margin: 2px;
+    transition: transform 0.1s, background-color 0.2s;
+    position: relative;
+    z-index: 25 !important;
+    pointer-events: auto !important;
+}
+
+.btn-primary.btn-sm:hover, .btn-danger.btn-sm:hover {
+    transform: scale(1.1);
+}
+
+.btn-primary.btn-sm:active, .btn-danger.btn-sm:active,
+.btn-primary.btn-sm.active, .btn-danger.btn-sm.active {
+    transform: scale(0.95);
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+}
+
+.btn-primary.btn-sm i, .btn-danger.btn-sm i {
+    font-size: 1.1em;
+}
+
+/* Ensure the action buttons are above other elements */
+.actions-cell {
+    position: relative;
+    z-index: 20 !important;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    position: relative;
+    z-index: 1;
+}
+
+table {
+    position: relative;
+    z-index: 2;
+}
+
+tbody tr {
+    position: relative;
+    z-index: 3;
+}
+
+td {
+    position: relative;
+    z-index: 5;
+}
+
+/* Prevent drag events from blocking button clicks */
+.drag-handle {
+    pointer-events: auto;
+    z-index: 10;
+}
+
+/* Make sure Sortable doesn't interfere with buttons */
+.sortable-ghost .actions-cell {
+    opacity: 1 !important;
+}
+
+.sortable-fallback .actions-cell {
+    display: none;
+}
+</style>
+
+<!-- Include Sortable.js library -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+
+<script>
+// Debug function to check if clicks are reaching buttons
+function debugButtonPosition(event) {
+    const target = event.target;
+    const editBtns = document.querySelectorAll('.edit-btn');
+    const deleteBtns = document.querySelectorAll('.btn-danger');
+    
+    // Log which button was clicked and its position
+    if (target.closest('.edit-btn')) {
+        const btn = target.closest('.edit-btn');
+        const index = Array.from(editBtns).indexOf(btn);
+        console.log(`Edit button clicked, index: ${index}, ID: ${btn.getAttribute('data-id')}`);
+    } else if (target.closest('.btn-danger')) {
+        const btn = target.closest('.btn-danger');
+        const index = Array.from(deleteBtns).indexOf(btn);
+        console.log(`Delete button clicked, index: ${index}`);
+    }
+}
+
+// Add debugging event listener
+document.addEventListener('click', debugButtonPosition, true);
+
+// Set up sortable categories
+document.addEventListener('DOMContentLoaded', function() {
+    const el = document.getElementById('sortable-categories');
+    
+    // Create Sortable instance with modified settings
+    const sortable = new Sortable(el, {
+        animation: 150,
+        handle: '.drag-handle',
+        ghostClass: 'sortable-ghost',
+        fallbackClass: 'sortable-fallback',
+        // Prevent conflict with action buttons
+        filter: '.actions-cell, .btn, button',
+        preventOnFilter: true,
+        // Ensure buttons are working
+        onStart: function(evt) {
+            // Disable sorting when clicking on action buttons
+            if (evt.originalEvent.target.closest('.btn')) {
+                evt.preventDefault();
+                return false;
+            }
+        },
+        onEnd: function(evt) {
+            // When reordering is done, save the new order
+            saveNewOrder();
+        }
+    });
+    
+    // Function to save the new order of categories
+    function saveNewOrder() {
+        const items = document.querySelectorAll('#sortable-categories tr');
+        const orderData = [];
+        
+        items.forEach((item, index) => {
+            orderData.push({
+                id: item.getAttribute('data-id'),
+                order: index + 1
+            });
+        });
+        
+        // Send the new order to the server
+        fetch('/admin/kategorien/reorder', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ categories: orderData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show';
+                alertDiv.innerHTML = `
+                    <strong>Erfolg!</strong> Die Reihenfolge wurde gespeichert.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                // Insert alert before the categories table
+                const cardBody = document.querySelector('.card-body');
+                cardBody.insertBefore(alertDiv, cardBody.querySelector('h5').nextSibling);
+                
+                // Remove alert after 3 seconds
+                setTimeout(() => {
+                    alertDiv.remove();
+                }, 3000);
+            } else {
+                alert('Fehler beim Speichern der Reihenfolge: ' + data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Fehler beim Speichern der Reihenfolge. Bitte versuchen Sie es erneut.');
+        });
+    }
+    
+    // Make sure all action buttons are properly clickable
+    forceButtonsClickable();
+});
+
+// Function to ensure all buttons are clickable even after drag/drop operations
+function forceButtonsClickable() {
+    const buttons = document.querySelectorAll('.btn-primary.btn-sm, .btn-danger.btn-sm');
+    buttons.forEach(btn => {
+        // Set inline style to ensure button is clickable
+        btn.style.pointerEvents = 'auto';
+        btn.style.zIndex = '25';
+        btn.style.position = 'relative';
+        
+        // Add click handler directly to each button
+        btn.onclick = function(e) {
+            e.stopPropagation();
+            if (btn.classList.contains('edit-btn')) {
+                const id = btn.getAttribute('data-id');
+                console.log('Direct edit button click, ID:', id);
+                editCategory(id);
+                return false;
+            } else if (btn.classList.contains('btn-danger')) {
+                return confirm('Wirklich löschen? Alle Menüeinträge in dieser Kategorie werden ebenfalls gelöscht!');
+            }
+        };
+    });
+}
+
+function editCategory(categoryId) {
+    // Debug-Ausgabe
+    console.log('Bearbeite Kategorie mit ID:', categoryId);
+    
+    fetch('/admin-panel/category/edit/' + categoryId)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Netzwerkantwort war nicht ok: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Geladene Daten:', data);
+            
+            if (data.error) {
+                alert('Fehler: ' + data.error);
+                return;
+            }
+            
+            // Formularfelder ausfüllen
+            document.getElementById('edit-id').value = data.id;
+            document.getElementById('edit-name').value = data.name;
+            document.getElementById('edit-display_name').value = data.display_name;
+            document.getElementById('edit-is_drink_category').checked = data.is_drink_category;
+            
+            // Action-URL setzen
+            document.getElementById('edit-form').action = '/admin/kategorien/bearbeiten/' + data.id;
+            
+            // Modal anzeigen
+            document.getElementById('editModal').style.display = 'block';
+        })
+        .catch(error => {
+            console.error('Fehler:', error);
+            alert('Fehler beim Laden der Kategorie-Daten: ' + error.message);
+        });
+}
+
+// Use event delegation with capture phase for edit buttons to ensure they always work
+document.addEventListener('click', function(event) {
+    // Find closest edit button if event originated from button or its child (icon)
+    const editButton = event.target.closest('.edit-btn');
+    
+    if (editButton) {
+        event.preventDefault();
+        event.stopPropagation();
+        const categoryId = editButton.getAttribute('data-id');
+        if (categoryId) {
+            console.log('Captured click - Bearbeite Kategorie mit ID:', categoryId);
+            editCategory(categoryId);
+        }
+        return false;
+    }
+}, true); // true for capture phase, ensures our handler runs first
+
+// Add touch handling for better mobile support
+document.addEventListener('touchstart', function(event) {
+    const editButton = event.target.closest('.edit-btn');
+    if (editButton) {
+        // Add visual feedback for touch
+        editButton.classList.add('active');
+        setTimeout(() => {
+            editButton.classList.remove('active');
+        }, 200);
+    }
+}, true);
+
+// Run setup again if table changes
+const observer = new MutationObserver(function(mutations) {
+    forceButtonsClickable();
+});
+
+// Observe the table for changes
+document.addEventListener('DOMContentLoaded', function() {
+    const tableContainer = document.querySelector('.table-responsive');
+    if (tableContainer) {
+        observer.observe(tableContainer, { childList: true, subtree: true });
+    }
+    
+    // Initial setup
+    forceButtonsClickable();
+});
+
+// Store scroll position in localStorage before form submission
+document.addEventListener('DOMContentLoaded', function() {
+    // Save current scroll position when edit modal is opened
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            localStorage.setItem('scrollPosition', window.scrollY);
+        });
+    });
+    
+    // Save current scroll position when edit form is submitted
+    document.getElementById('edit-form').addEventListener('submit', function() {
+        localStorage.setItem('scrollPosition', window.scrollY);
+    });
+    
+    // Restore scroll position after page reload
+    if (localStorage.getItem('scrollPosition')) {
+        // Small delay to ensure the page is fully loaded
+        setTimeout(function() {
+            window.scrollTo(0, parseInt(localStorage.getItem('scrollPosition')));
+        }, 100);
+    }
+});
+
+// Modal schließen
+document.querySelector('.close').onclick = function() {
+    document.getElementById('editModal').style.display = 'none';
+}
+
+// Modal schließen wenn außerhalb geklickt wird
+window.onclick = function(event) {
+    var modal = document.getElementById('editModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+</script>
+{% endblock %}
+

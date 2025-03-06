@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="story-section">
+    <div class="container">
+        <div class="story-header">
+            <h1 class="story-title">30 Jahre Gastronomie-Erfahrung</h1>
+            <div class="story-intro">
+                Eine Geschichte von Leidenschaft, Perfektion und der stetigen Suche nach dem perfekten Geschmack.
+            </div>
+        </div>
+        
+        <div class="story-content">
+            <div class="story-chapter">
+                <p class="story-lead">Seit 1988 leben wir die Leidenschaft für die griechische Küche – eine Reise, die uns von kleinen Tavernen bis zu unserem eigenen Restaurant geführt hat.</p>
+                
+                <p>Alles begann in den Küchen Griechenlands, wo die Grundlagen unserer kulinarischen Kunst gelegt wurden. Nach der Ankunft in Deutschland arbeiteten wir in verschiedenen Restaurants, sammelten Erfahrungen und verfeinerten unser Handwerk. Jede Station war ein wichtiger Schritt auf unserem Weg zur Perfektion.</p>
+            </div>
+
+            <div class="story-highlight">
+                <h2>Unsere kulinarische Reise</h2>
+                <p>In drei Jahrzehnten haben wir uns ein umfassendes Wissen über die mediterrane Küche angeeignet. Von traditionellen Familienrezepten bis hin zu modernen Interpretationen klassischer Gerichte – jeder Schritt dieser Reise hat uns zu dem gemacht, was wir heute sind.</p>
+            </div>
+
+            <div class="story-chapter">
+                <p>Die jüngere Generation bringt seit 2017 frische Impulse in unsere Küche. Die Verbindung von traditionellem Handwerk und modernen Küchentechniken ermöglicht es uns, klassische griechische Gerichte neu zu interpretieren und dabei ihren authentischen Charakter zu bewahren.</p>
+            </div>
+
+            <div class="story-chapter">
+                <p>Unsere Expertise zeigt sich in jedem Detail: von der sorgfältigen Auswahl der Zutaten über die präzise Zubereitung bis hin zum perfekten Anrichten. Wir wissen, dass es die kleinen Nuancen sind, die den Unterschied zwischen einem guten und einem außergewöhnlichen Gericht ausmachen.</p>
+            </div>
+
+            <div class="story-highlight">
+                <h2>Was uns auszeichnet</h2>
+                <p>30 Jahre Erfahrung bedeuten für uns nicht nur eine lange Zeit, sondern vor allem:</p>
+                <ul>
+                    <li>Perfektionierte Rezepturen und Techniken</li>
+                    <li>Tiefes Verständnis für Gewürze und Aromen</li>
+                    <li>Bewährte Qualitätsstandards</li>
+                    <li>Die perfekte Balance zwischen Tradition und Innovation</li>
+                </ul>
+            </div>
+
+            <div class="story-chapter">
+                <p>Heute, im Jahr 2025, fließt diese jahrzehntelange Erfahrung in jedes Gericht ein, das unsere Küche verlässt. Unser Ziel ist es, nicht nur Speisen zu servieren, sondern unvergessliche kulinarische Erlebnisse zu schaffen.</p>
+            </div>
+
+            <div class="story-closing">
+                <p>Erleben Sie den Geschmack von 30 Jahren Leidenschaft für die griechische Küche.</p>
+                <div class="welcome-message">Willkommen bei „Alas"!</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .story-section {
+        padding: 80px 0;
+        background: #fff;
+        color: #333;
+    }
+
+    .story-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .story-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8em;
+        color: #2c2c2c;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .story-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: #c17817;
+    }
+
+    .story-intro {
+        font-size: 1.2em;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto;
+        font-style: italic;
+    }
+
+    .story-content {
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .story-chapter {
+        margin-bottom: 40px;
+    }
+
+    .story-lead {
+        font-size: 1.4em;
+        color: #c17817;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .story-highlight {
+        background: #f9f9f9;
+        padding: 40px;
+        border-radius: 10px;
+        margin: 40px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .story-highlight h2 {
+        color: #c17817;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+
+    .story-highlight ul {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    .story-highlight li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .story-highlight li:before {
+        content: '•';
+        color: #c17817;
+        font-size: 1.5em;
+        position: absolute;
+        left: 0;
+        top: -2px;
+    }
+
+    .story-closing {
+        text-align: center;
+        margin-top: 60px;
+        padding: 40px 0;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .welcome-message {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8em;
+        color: #c17817;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .story-section {
+            padding: 40px 20px;
+        }
+
+        .story-title {
+            font-size: 2.2em;
+        }
+
+        .story-lead {
+            font-size: 1.2em;
+        }
+
+        .story-highlight {
+            padding: 30px;
+        }
+    }
+</style>
+{% endblock %}

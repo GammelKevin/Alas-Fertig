@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="story-section">
+    <div class="container">
+        <div class="story-header">
+            <h1 class="story-title">Eine Familie, Eine Vision</h1>
+            <div class="story-intro">
+                Die Geschichte einer Familie, die ihre Träume und Traditionen über Generationen bewahrt und weiterentwickelt.
+            </div>
+        </div>
+        
+        <div class="story-content">
+            <div class="story-chapter">
+                <p class="story-lead">Von Griechenland nach Deutschland – die Geschichte unserer Familie ist eine Geschichte von Mut, Zusammenhalt und der Liebe zur Gastronomie.</p>
+                
+                <p>1988 wagten meine Eltern den mutigen Schritt, ihre Heimat Griechenland zu verlassen und in Deutschland ein neues Leben zu beginnen. Im Gepäck: traditionelle Rezepte, die Liebe zur griechischen Küche und der unerschütterliche Glaube an eine gemeinsame Zukunft.</p>
+            </div>
+
+            <div class="story-highlight">
+                <h2>Was Familie für uns bedeutet</h2>
+                <p>Ein Familienbetrieb zu sein bedeutet für uns mehr als nur zusammen zu arbeiten. Es bedeutet:</p>
+                <ul>
+                    <li>Gemeinsame Werte und Traditionen zu pflegen</li>
+                    <li>Jede Entscheidung im Sinne der Familie zu treffen</li>
+                    <li>Authentizität in allem, was wir tun</li>
+                    <li>Persönliche Betreuung unserer Gäste</li>
+                </ul>
+            </div>
+
+            <div class="story-chapter">
+                <p>Die Küche war schon immer das Herz unserer Familie. Hier wurden nicht nur Mahlzeiten zubereitet, sondern auch Geschichten erzählt, Traditionen weitergegeben und die Liebe zur griechischen Küche von einer Generation zur nächsten vererbt. Jedes Familienmitglied bringt seine eigenen Stärken und Ideen ein, was unser Restaurant zu etwas ganz Besonderem macht.</p>
+            </div>
+
+            <div class="story-chapter">
+                <p>Als die jüngere Generation 2017 in das Familiengeschäft einstieg, war es uns wichtig, die Balance zwischen Tradition und Innovation zu finden. Während die Eltern ihre jahrzehntelange Erfahrung und das Wissen um authentische griechische Küche einbringen, sorgt die neue Generation für frische Impulse und moderne Interpretationen.</p>
+            </div>
+
+            <div class="story-highlight">
+                <h2>Warum „Alas"?</h2>
+                <p>Der Name „Alas" steht für alles, was unsere Familie ausmacht. Es ist mehr als ein Restaurant – es ist das Ergebnis jahrelanger harter Arbeit, gemeinsamer Träume und der Vision, authentische griechische Gastfreundschaft nach Deutschland zu bringen. Am 15. Dezember 2023 wurde dieser Traum mit der Eröffnung unseres Restaurants Wirklichkeit.</p>
+            </div>
+
+            <div class="story-chapter">
+                <p>Heute, im Jahr 2025, führen wir diese Familientradition mit Stolz fort. Jeder Gast, der unser Restaurant betritt, wird Teil unserer erweiterten Familie. Wir teilen nicht nur unsere Speisen, sondern auch unsere Geschichte, unsere Kultur und unsere Leidenschaft für die griechische Küche.</p>
+            </div>
+
+            <div class="story-closing">
+                <p>Werden Sie Teil unserer Familiengeschichte.</p>
+                <div class="welcome-message">Willkommen bei „Alas"!</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    .story-section {
+        padding: 80px 0;
+        background: #fff;
+        color: #333;
+    }
+
+    .story-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+
+    .story-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8em;
+        color: #2c2c2c;
+        margin-bottom: 20px;
+        position: relative;
+        padding-bottom: 20px;
+    }
+
+    .story-title:after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 3px;
+        background: #c17817;
+    }
+
+    .story-intro {
+        font-size: 1.2em;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto;
+        font-style: italic;
+    }
+
+    .story-content {
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
+
+    .story-chapter {
+        margin-bottom: 40px;
+    }
+
+    .story-lead {
+        font-size: 1.4em;
+        color: #c17817;
+        line-height: 1.6;
+        margin-bottom: 30px;
+        font-family: 'Playfair Display', serif;
+    }
+
+    .story-highlight {
+        background: #f9f9f9;
+        padding: 40px;
+        border-radius: 10px;
+        margin: 40px 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+
+    .story-highlight h2 {
+        color: #c17817;
+        font-family: 'Playfair Display', serif;
+        margin-bottom: 20px;
+        font-size: 2em;
+    }
+
+    .story-highlight ul {
+        list-style: none;
+        padding: 0;
+        margin: 20px 0;
+    }
+
+    .story-highlight li {
+        position: relative;
+        padding-left: 25px;
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+
+    .story-highlight li:before {
+        content: '•';
+        color: #c17817;
+        font-size: 1.5em;
+        position: absolute;
+        left: 0;
+        top: -2px;
+    }
+
+    .story-closing {
+        text-align: center;
+        margin-top: 60px;
+        padding: 40px 0;
+        border-top: 2px solid #f0f0f0;
+    }
+
+    .welcome-message {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.8em;
+        color: #c17817;
+        margin-top: 30px;
+    }
+
+    @media (max-width: 768px) {
+        .story-section {
+            padding: 40px 20px;
+        }
+
+        .story-title {
+            font-size: 2.2em;
+        }
+
+        .story-lead {
+            font-size: 1.2em;
+        }
+
+        .story-highlight {
+            padding: 30px;
+        }
+    }
+</style>
+{% endblock %}

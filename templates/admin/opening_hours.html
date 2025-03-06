@@ -1,0 +1,399 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Admin: Öffnungszeiten{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <!-- Toast Container -->
+    <div id="toast-container" class="position-fixed top-0 end-0 p-3" style="z-index: 1100;"></div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="section-header text-center mb-5">
+                <h2 class="display-4 text-dark">Öffnungszeiten verwalten</h2>
+                <div class="separator bg-primary my-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aktuelle Öffnungszeiten -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white py-3">
+                    <h3 class="card-title mb-0">Aktuelle Öffnungszeiten</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th scope="col">Tag</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Öffnungszeiten</th>
+                                    <th scope="col" class="text-end">Aktionen</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for hour in hours %}
+                                <tr data-id="{{ hour.id }}">
+                                    <td class="fw-bold">{{ hour.day }}</td>
+                                    <td>
+                                        {% if hour.is_on_vacation() %}
+                                            <span class="badge bg-info">
+                                                <i class="fas fa-umbrella-beach me-1"></i>
+                                                Urlaub ({{ hour.vacation_start.strftime('%d.%m.%Y') }} - {{ hour.vacation_end.strftime('%d.%m.%Y') }})
+                                            </span>
+                                        {% elif hour.closed %}
+                                            <span class="badge bg-secondary">
+                                                <i class="fas fa-door-closed me-1"></i>
+                                                Ruhetag
+                                            </span>
+                                        {% else %}
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-door-open me-1"></i>
+                                                Geöffnet
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if hour.is_on_vacation() %}
+                                            <div class="text-muted">
+                                                <i class="fas fa-umbrella-beach me-2"></i>
+                                                Im Urlaub
+                                            </div>
+                                        {% elif hour.closed %}
+                                            <div class="text-muted">
+                                                <i class="fas fa-door-closed me-2"></i>
+                                                Geschlossen
+                                            </div>
+                                        {% elif hour.open_time_1 and hour.close_time_1 %}
+                                            <div class="mb-1">
+                                                <i class="far fa-clock me-2"></i>
+                                                {{ hour.open_time_1 }} - {{ hour.close_time_1 }}
+                                            </div>
+                                            {% if hour.open_time_2 and hour.close_time_2 %}
+                                                <div>
+                                                    <i class="far fa-clock me-2"></i>
+                                                    {{ hour.open_time_2 }} - {{ hour.close_time_2 }}
+                                                </div>
+                                            {% endif %}
+                                        {% else %}
+                                            <div class="text-muted">
+                                                <i class="fas fa-exclamation-circle me-2"></i>
+                                                Keine Zeiten eingetragen
+                                            </div>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary" onclick="editOpeningHours({{ hour.id }})">
+                                            <i class="fas fa-edit"></i> Bearbeiten
+                                        </button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteOpeningHours({{ hour.id }})">
+                                            <i class="fas fa-trash"></i> Löschen
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Neue Öffnungszeit hinzufügen -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-dark text-white py-3">
+                    <h3 class="card-title mb-0">Neue Öffnungszeit hinzufügen</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form id="addForm" method="POST" class="needs-validation" novalidate>
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="day" class="form-label fw-bold">Tag auswählen</label>
+                                <select class="form-select" id="day" name="day" required>
+                                    <option value="">Bitte wählen...</option>
+                                    <option value="Montag">Montag</option>
+                                    <option value="Dienstag">Dienstag</option>
+                                    <option value="Mittwoch">Mittwoch</option>
+                                    <option value="Donnerstag">Donnerstag</option>
+                                    <option value="Freitag">Freitag</option>
+                                    <option value="Samstag">Samstag</option>
+                                    <option value="Sonntag">Sonntag</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="form-check mb-3">
+                                    <input type="checkbox" class="form-check-input" id="addVacation" name="vacation_active">
+                                    <label class="form-check-label" for="addVacation">
+                                        <i class="fas fa-umbrella-beach me-2"></i>
+                                        Urlaubstag
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="addClosed" name="closed">
+                                    <label class="form-check-label" for="addClosed">
+                                        <i class="fas fa-door-closed me-2"></i>
+                                        Ruhetag
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="addVacationDates" style="display: none;">
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <label for="addVacationStart" class="form-label fw-bold">Urlaubsbeginn</label>
+                                    <input type="date" class="form-control" id="addVacationStart" name="vacation_start">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="addVacationEnd" class="form-label fw-bold">Urlaubsende</label>
+                                    <input type="date" class="form-control" id="addVacationEnd" name="vacation_end">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="addTimeFields">
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="mb-3">Erste Öffnungszeit</h5>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="addOpenTime1" class="form-label fw-bold">Von</label>
+                                    <input type="time" class="form-control" id="addOpenTime1" name="open_time_1">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="addCloseTime1" class="form-label fw-bold">Bis</label>
+                                    <input type="time" class="form-control" id="addCloseTime1" name="close_time_1">
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <h5 class="mb-3">Zweite Öffnungszeit (optional)</h5>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="addOpenTime2" class="form-label fw-bold">Von</label>
+                                    <input type="time" class="form-control" id="addOpenTime2" name="open_time_2">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="addCloseTime2" class="form-label fw-bold">Bis</label>
+                                    <input type="time" class="form-control" id="addCloseTime2" name="close_time_2">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-4">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-plus-circle me-2"></i>
+                                    Öffnungszeit hinzufügen
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title">Öffnungszeit bearbeiten</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editForm">
+                    <input type="hidden" id="editId" name="id">
+                    {{ form.csrf_token }}
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-4">
+                            <label for="editDay" class="form-label fw-bold">Tag auswählen</label>
+                            <select class="form-select" id="editDay" name="day" required>
+                                <option value="">Bitte wählen...</option>
+                                <option value="Montag">Montag</option>
+                                <option value="Dienstag">Dienstag</option>
+                                <option value="Mittwoch">Mittwoch</option>
+                                <option value="Donnerstag">Donnerstag</option>
+                                <option value="Freitag">Freitag</option>
+                                <option value="Samstag">Samstag</option>
+                                <option value="Sonntag">Sonntag</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="editVacation" name="vacation_active">
+                                <label class="form-check-label" for="editVacation">
+                                    <i class="fas fa-umbrella-beach me-2"></i>
+                                    Urlaubstag
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="editClosed" name="closed">
+                                <label class="form-check-label" for="editClosed">
+                                    <i class="fas fa-door-closed me-2"></i>
+                                    Ruhetag
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="editVacationDates" style="display: none;">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <label for="editVacationStart" class="form-label fw-bold">Urlaubsbeginn</label>
+                                <input type="date" class="form-control" id="editVacationStart" name="vacation_start">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editVacationEnd" class="form-label fw-bold">Urlaubsende</label>
+                                <input type="date" class="form-control" id="editVacationEnd" name="vacation_end">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="editTimeFields">
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="mb-3">Erste Öffnungszeit</h5>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editOpenTime1" class="form-label fw-bold">Von</label>
+                                <input type="time" class="form-control" id="editOpenTime1" name="open_time_1">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editCloseTime1" class="form-label fw-bold">Bis</label>
+                                <input type="time" class="form-control" id="editCloseTime1" name="close_time_1">
+                            </div>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-12">
+                                <h5 class="mb-3">Zweite Öffnungszeit (optional)</h5>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editOpenTime2" class="form-label fw-bold">Von</label>
+                                <input type="time" class="form-control" id="editOpenTime2" name="open_time_2">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="editCloseTime2" class="form-label fw-bold">Bis</label>
+                                <input type="time" class="form-control" id="editCloseTime2" name="close_time_2">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="submit" form="editForm" class="btn btn-primary">
+                    <i class="fas fa-save me-2"></i>
+                    Speichern
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Öffnungszeit löschen</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p class="mb-0">Möchten Sie diese Öffnungszeit wirklich löschen?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Abbrechen</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDelete()">
+                    <i class="fas fa-trash me-2"></i>
+                    Löschen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.separator {
+    width: 80px;
+    height: 3px;
+    background-color: #e19b4c !important;
+    margin: 0 auto;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #e19b4c;
+    border-color: #e19b4c;
+}
+
+.btn-primary:hover {
+    background-color: #c17817;
+    border-color: #c17817;
+}
+
+.form-check-input:checked {
+    background-color: #e19b4c;
+    border-color: #e19b4c;
+}
+
+.modal-content {
+    border: none;
+    border-radius: 15px;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #e19b4c;
+    box-shadow: 0 0 0 0.25rem rgba(225, 155, 76, 0.25);
+}
+</style>
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<!-- JavaScript für Validierung und AJAX -->
+<script src="{{ url_for('static', filename='js/opening_hours.js') }}"></script>
+{% endblock %}

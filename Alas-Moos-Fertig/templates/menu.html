@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="menu-page">
+    <header class="menu-header">
+        <h1>Unsere Speisekarte</h1>
+    </header>
+
+    <div class="menu-content">
+        <!-- Speisen -->
+        {% for category in categories %}
+            {% if not category.is_drink_category %}
+                <section class="menu-section">
+                    <h2>{{ category.display_name }}</h2>
+                    <div class="menu-items">
+                        {% for item in menu_items %}
+                            {% if item.category_id == category.id %}
+                                <div class="menu-item {% if item.image_path %}with-image{% endif %}">
+                                    {% if item.image_path %}
+                                        <div class="menu-item-image">
+                                            <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.name }}" loading="lazy">
+                                        </div>
+                                    {% endif %}
+                                    <div class="menu-item-content">
+                                        <div class="item-header">
+                                            <h3 class="item-name">{{ item.name }}</h3>
+                                            <span class="item-price">{{ "%.2f"|format(item.price) }} €</span>
+                                        </div>
+                                        {% if item.description %}
+                                            <p class="description">{{ item.description }}</p>
+                                        {% endif %}
+                                        <div class="item-tags">
+                                            {% if item.vegetarian %}
+                                                <span class="badge badge-vegetarian">🥬 Vegetarisch</span>
+                                            {% endif %}
+                                            {% if item.vegan %}
+                                                <span class="badge badge-vegan">🌱 Vegan</span>
+                                            {% endif %}
+                                            {% if item.spicy %}
+                                                <span class="badge badge-spicy">🌶️ Scharf</span>
+                                            {% endif %}
+                                            {% if item.gluten_free %}
+                                                <span class="badge badge-gluten-free">🌾 Glutenfrei</span>
+                                            {% endif %}
+                                            {% if item.lactose_free %}
+                                                <span class="badge badge-lactose-free">🥛 Laktosefrei</span>
+                                            {% endif %}
+                                            {% if item.kid_friendly %}
+                                                <span class="badge badge-kid-friendly">👶 Kinderfreundlich</span>
+                                            {% endif %}
+                                            {% if item.alcohol_free %}
+                                                <span class="badge badge-alcohol-free">🚫 Alkoholfrei</span>
+                                            {% endif %}
+                                            {% if item.contains_alcohol %}
+                                                <span class="badge badge-contains-alcohol">🍷 Alkoholisch</span>
+                                            {% endif %}
+                                            {% if item.homemade %}
+                                                <span class="badge badge-homemade">🏠 Hausgemacht</span>
+                                            {% endif %}
+                                            {% if item.sugar_free %}
+                                                <span class="badge badge-sugar-free">🍯 Zuckerfrei</span>
+                                            {% endif %}
+                                            {% if item.recommended %}
+                                                <span class="badge badge-recommended">⭐ Empfohlen</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        {% endfor %}
+
+        <!-- Getränke -->
+        {% for category in categories %}
+            {% if category.is_drink_category %}
+                <section class="menu-section">
+                    <h2>{{ category.display_name }}</h2>
+                    <div class="menu-items">
+                        {% for item in menu_items %}
+                            {% if item.category_id == category.id %}
+                                <div class="menu-item {% if item.image_path %}with-image{% endif %}">
+                                    {% if item.image_path %}
+                                        <div class="menu-item-image">
+                                            <img src="{{ url_for('static', filename=item.image_path) }}" alt="{{ item.name }}" loading="lazy">
+                                        </div>
+                                    {% endif %}
+                                    <div class="menu-item-content">
+                                        <div class="item-header">
+                                            <h3 class="item-name">{{ item.name }}</h3>
+                                            <span class="item-price">{{ "%.2f"|format(item.price) }} €</span>
+                                        </div>
+                                        {% if item.description %}
+                                            <p class="description">{{ item.description }}</p>
+                                        {% endif %}
+                                        <div class="item-tags">
+                                            {% if item.vegetarian %}
+                                                <span class="badge badge-vegetarian">🥬 Vegetarisch</span>
+                                            {% endif %}
+                                            {% if item.vegan %}
+                                                <span class="badge badge-vegan">🌱 Vegan</span>
+                                            {% endif %}
+                                            {% if item.spicy %}
+                                                <span class="badge badge-spicy">🌶️ Scharf</span>
+                                            {% endif %}
+                                            {% if item.gluten_free %}
+                                                <span class="badge badge-gluten-free">🌾 Glutenfrei</span>
+                                            {% endif %}
+                                            {% if item.lactose_free %}
+                                                <span class="badge badge-lactose-free">🥛 Laktosefrei</span>
+                                            {% endif %}
+                                            {% if item.kid_friendly %}
+                                                <span class="badge badge-kid-friendly">👶 Kinderfreundlich</span>
+                                            {% endif %}
+                                            {% if item.alcohol_free %}
+                                                <span class="badge badge-alcohol-free">🚫 Alkoholfrei</span>
+                                            {% endif %}
+                                            {% if item.contains_alcohol %}
+                                                <span class="badge badge-contains-alcohol">🍷 Alkoholisch</span>
+                                            {% endif %}
+                                            {% if item.homemade %}
+                                                <span class="badge badge-homemade">🏠 Hausgemacht</span>
+                                            {% endif %}
+                                            {% if item.sugar_free %}
+                                                <span class="badge badge-sugar-free">🍯 Zuckerfrei</span>
+                                            {% endif %}
+                                            {% if item.recommended %}
+                                                <span class="badge badge-recommended">⭐ Empfohlen</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.menu-page {
+    max-width: 1200px;
+    margin: 80px auto 0;
+    padding: 20px;
+}
+
+.menu-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.menu-header h1 {
+    color: #c17817;
+    font-size: 2.5em;
+    margin: 0;
+}
+
+.menu-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+}
+
+.menu-section {
+    margin-bottom: 40px;
+}
+
+.menu-section h2, .drinks-section h2 {
+    color: #333;
+    font-size: 2em;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #c17817;
+}
+
+.menu-section h3 {
+    color: #c17817;
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.menu-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+    margin: 20px 0;
+}
+
+.menu-item {
+    background: #fff;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.menu-item.with-image {
+    padding-top: 0;
+}
+
+.menu-item-image {
+    margin: 0 -20px 15px -20px;
+    width: calc(100% + 40px);
+    height: 180px;
+    overflow: hidden;
+    border-radius: 15px 15px 0 0;
+    position: relative;
+}
+
+.menu-item-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 40px;
+    background: linear-gradient(to top, rgba(255,255,255,1), rgba(255,255,255,0));
+    pointer-events: none;
+}
+
+.menu-item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.menu-item-image:hover img {
+    transform: scale(1.05);
+}
+
+.menu-item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+    gap: 15px;
+}
+
+.item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #e19b4c;
+    flex: 1;
+    min-width: 0;
+}
+
+.item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: #e19b4c;
+    white-space: nowrap;
+}
+
+.description {
+    color: #666;
+    margin: 5px 0 10px 0;
+    line-height: 1.4;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+}
+
+.item-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 10px;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    color: white;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.badge-vegetarian {
+    background-color: #4CAF50;
+}
+
+.badge-vegan {
+    background-color: #8BC34A;
+}
+
+.badge-spicy {
+    background-color: #F44336;
+}
+
+.badge-gluten-free {
+    background-color: #795548;
+}
+
+.badge-lactose-free {
+    background-color: #2196F3;
+}
+
+.badge-kid-friendly {
+    background-color: #FF9800;
+}
+
+.badge-alcohol-free {
+    background-color: #9C27B0;
+}
+
+.badge-contains-alcohol {
+    background-color: #673AB7;
+}
+
+.badge-homemade {
+    background-color: #FF5722;
+}
+
+.badge-sugar-free {
+    background-color: #009688;
+}
+
+.badge-recommended {
+    background-color: #FFC107;
+    color: #333;
+}
+
+/* Getränke-Sektion */
+.drinks-section {
+    margin-top: 60px;
+}
+
+@media (max-width: 1200px) {
+    .menu-items {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .menu-items {
+        grid-template-columns: 1fr;
+    }
+    
+    .menu-item-image {
+        height: 160px;
+    }
+}
+</style>
+{% endblock %}

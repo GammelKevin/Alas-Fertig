@@ -1,0 +1,23 @@
+[2025-03-04 01:05:21] Installiere Sicherheits-Abhängigkeiten...
+[2025-03-04 01:05:30] Sicherheitsabhängigkeiten erfolgreich installiert.
+[2025-03-04 01:05:30] Überprüfe Verzeichnisstruktur...
+[2025-03-04 01:05:30] Verzeichnis existiert bereits: static/uploads
+[2025-03-04 01:05:30] Verzeichnis existiert bereits: static/uploads/gallery
+[2025-03-04 01:05:30] Verzeichnis erstellt: static/uploads/menu
+[2025-03-04 01:05:30] Verzeichnis erstellt: static/quarantine
+[2025-03-04 01:05:30] Windows-System erkannt. Überprüfung der Berechtigungen nicht erforderlich.
+[2025-03-04 01:05:30] Initialisiere Sicherheitsmodule...
+[2025-03-04 01:05:30] Sicherheitsmodul gefunden: security_utils.py
+[2025-03-04 01:05:30] Sicherheitsmodul gefunden: scan_uploads.py
+[2025-03-04 01:05:30] Sicherheitsmodul gefunden: check_sql_injection.py
+[2025-03-04 01:05:30] Alle Sicherheitsmodule initialisiert.
+[2025-03-04 01:05:30] Erstelle Sicherheits-Backup...
+[2025-03-04 01:05:30] Backup erstellt: security_utils.py -> security_backup\security_utils.py.20250304010530
+[2025-03-04 01:05:30] Backup erstellt: scan_uploads.py -> security_backup\scan_uploads.py.20250304010530
+[2025-03-04 01:05:30] Backup erstellt: check_sql_injection.py -> security_backup\check_sql_injection.py.20250304010530
+[2025-03-04 01:05:30] Backup erstellt: SECURITY.md -> security_backup\SECURITY.md.20250304010530
+[2025-03-04 01:05:30] Backup erstellt: security_requirements.txt -> security_backup\security_requirements.txt.20250304010530
+[2025-03-04 01:05:30] Sicherheits-Backup abgeschlossen.
+[2025-03-04 01:05:30] Führe initialen Sicherheits-Scan durch...
+[2025-03-04 01:05:30] Starte Scan der hochgeladenen Dateien...
+[2025-03-04 01:05:30] Fehler beim Ausführen des Sicherheits-Scans: Command '['C:\\Users\\tobia\\AppData\\Local\\Programs\\Python\\Python310\\python.exe', 'scan_uploads.py']' returned non-zero exit status 1.

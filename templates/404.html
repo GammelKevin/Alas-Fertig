@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="error-section" style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 6rem 0; background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ url_for('static', filename='images/background.jpg') }}') center/cover;">
+    <div class="container text-center">
+        <h1 style="font-family: 'Playfair Display', serif; font-size: 8rem; color: #e19b4c; margin-bottom: 1rem;">404</h1>
+        <h2 style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #fff; margin-bottom: 1.5rem;">Seite nicht gefunden</h2>
+        <p style="color: #fff; font-size: 1.2rem; margin-bottom: 2rem;">Die von Ihnen gesuchte Seite existiert leider nicht.</p>
+        <a href="{{ url_for('index') }}" class="cta-button" style="display: inline-block; padding: 1rem 2rem; background-color: #e19b4c; color: #fff; text-decoration: none; border-radius: 5px; font-size: 1.1rem; transition: all 0.3s ease;">
+            <i class="fas fa-home" style="margin-right: 0.5rem;"></i>
+            Zurück zur Startseite
+        </a>
+    </div>
+</section>
+{% endblock %}

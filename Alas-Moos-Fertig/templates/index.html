@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant ALAS - Griechische Spezialitäten in Moos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    <div class="loading-screen">
+        <div class="loader">
+            <div class="loader-inner"></div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Alas</h1>
+            <p class="hero-subtitle">Griechische Spezialitäten in Moos</p>
+            <a href="{{ url_for('menu') }}" class="cta-button">Speisekarte ansehen</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Willkommen bei Alas</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Genießen Sie authentische griechische Küche in gemütlicher Atmosphäre. Unser Restaurant bietet Ihnen traditionelle Spezialitäten, zubereitet mit frischen Zutaten und viel Liebe zum Detail.</p>
+                    <p>Entdecken Sie die authentische griechische Küche in unserem familiär geführten Restaurant in Moos. Wir verwenden nur die besten Zutaten und traditionelle Rezepte, um Ihnen ein unvergessliches Geschmackserlebnis zu bieten.</p>
+                    <div class="about-features">
+                        <div class="feature">
+                            <i class="fas fa-utensils"></i>
+                            <h3>Authentische Küche</h3>
+                            <p>Traditionelle griechische Rezepte</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-wine-glass-alt"></i>
+                            <h3>Ausgewählte Weine</h3>
+                            <p>Griechische und internationale Weine</p>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-heart"></i>
+                            <h3>Familiäre Atmosphäre</h3>
+                            <p>Herzlicher Service</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Opening Hours Section -->
+    <section id="opening-hours" class="opening-hours">
+        <div class="opening-hours-container">
+            <div class="section-title">
+                <h2>Unsere Öffnungszeiten</h2>
+            </div>
+            <div class="hours-grid">
+                {% for hour in opening_hours %}
+                <div class="day-card">
+                    <h3 class="day-name">{{ hour.day }}</h3>
+                    {% if hour.closed %}
+                    <p class="closed">Ruhetag</p>
+                    {% else %}
+                    <p class="hours">
+                        {{ hour.open_time_1 }} - {{ hour.close_time_1 }}
+                        {% if hour.open_time_2 and hour.close_time_2 %}
+                        <br>
+                        {{ hour.open_time_2 }} - {{ hour.close_time_2 }}
+                        {% endif %}
+                    </p>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Kontakt & Anfahrt</h2>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="info-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <h3>Adresse</h3>
+                        <p>Bundesstr. 39<br>94554 Moos, Niederbayern</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-phone"></i>
+                        <h3>Telefon</h3>
+                        <p>09938 2320307</p>
+                    </div>
+                    <div class="info-item">
+                        <i class="fas fa-envelope"></i>
+                        <h3>E-Mail</h3>
+                        <p>info@restaurant-alas.de</p>
+                    </div>
+                </div>
+                <div class="map">
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d527.8950435033755!2d12.965961669644712!3d48.73662648721223!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47750fdfcc4397b5%3A0xa2a51ee227bcbdca!2sRestaurant%20ALAS!5e0!3m2!1sde!2sde!4v1707338159015!5m2!1sde!2sde"
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock %}
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Kontakt</h3>
+                <p>Telefon: <a href="tel:+4909938230307">09938 2320307</a></p>
+                <p>Email: <a href="mailto:info@restaurant-alas.de">info@restaurant-alas.de</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Adresse</h3>
+                <p>Alas</p>
+                <p>Münchener Str. 127</p>
+                <p>85051 Ingolstadt</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Folgen Sie uns</h3>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/profile.php?id=100063556361475" target="_blank" class="social-link">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Alas. Alle Rechte vorbehalten.</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

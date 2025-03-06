@@ -1,0 +1,101 @@
+{% extends "admin/base.html" %}
+
+{% block header %}Kategorien verwalten{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Neue Kategorie hinzufügen -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Neue Kategorie hinzufügen</h5>
+            <form action="{{ url_for('admin_add_category') }}" method="POST">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="name" class="form-label">URL-Name</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                        <small class="text-muted">z.B. "vorspeisen" (keine Leerzeichen/Sonderzeichen)</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="display_name" class="form-label">Anzeigename</label>
+                        <input type="text" class="form-control" id="display_name" name="display_name" required>
+                        <small class="text-muted">z.B. "Vorspeisen"</small>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="order" class="form-label">Reihenfolge</label>
+                        <input type="number" class="form-control" id="order" name="order" min="1" required>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="form-check mt-4">
+                            <input type="checkbox" class="form-check-input" id="is_drink_category" name="is_drink_category">
+                            <label class="form-check-label" for="is_drink_category">Getränke-Kategorie?</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Kategorie hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Bestehende Kategorien -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title mb-4">Bestehende Kategorien</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>URL-Name</th>
+                            <th>Anzeigename</th>
+                            <th>Reihenfolge</th>
+                            <th>Typ</th>
+                            <th>Aktionen</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for category in categories %}
+                        <tr>
+                            <td>{{ category.name }}</td>
+                            <td>{{ category.display_name }}</td>
+                            <td>{{ category.order }}</td>
+                            <td>
+                                {% if category.is_drink_category %}
+                                <span class="badge bg-info">Getränke</span>
+                                {% else %}
+                                <span class="badge bg-success">Speisen</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <form action="{{ url_for('admin_delete_category', id=category.id) }}" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Wirklich löschen? Alle Menüeinträge in dieser Kategorie werden ebenfalls gelöscht!')">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.form-check {
+    padding-top: 2rem;
+}
+
+.badge {
+    font-size: 0.9em;
+    padding: 0.5em 0.7em;
+}
+
+.btn-danger {
+    padding: 0.25rem 0.5rem;
+}
+
+.table td {
+    vertical-align: middle;
+}
+</style>
+{% endblock %}

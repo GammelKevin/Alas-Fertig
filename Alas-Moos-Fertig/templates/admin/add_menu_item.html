@@ -1,0 +1,187 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-section">
+    <h2>Neues Gericht hinzufügen</h2>
+    <form method="POST" enctype="multipart/form-data" class="admin-form">
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Beschreibung</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="price">Preis (€) *</label>
+            <input type="number" id="price" name="price" step="0.10" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="category_id">Kategorie *</label>
+            <select id="category_id" name="category_id" required>
+                {% for category in categories %}
+                <option value="{{ category.id }}">{{ category.display_name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="image">Bild</label>
+            <input type="file" id="image" name="image" accept="image/*">
+            <small>Erlaubte Formate: JPG, PNG, GIF, WEBP</small>
+        </div>
+
+        <div class="form-group">
+            <label for="portion_size">Portionsgröße</label>
+            <input type="text" id="portion_size" name="portion_size">
+        </div>
+
+        <div class="form-group">
+            <label for="allergens">Allergene</label>
+            <input type="text" id="allergens" name="allergens" placeholder="z.B. Gluten, Milch, Nüsse">
+        </div>
+
+        <div class="form-group">
+            <label for="spiciness_level">Schärfegrad</label>
+            <select id="spiciness_level" name="spiciness_level">
+                <option value="0">Nicht scharf</option>
+                <option value="1">Leicht scharf</option>
+                <option value="2">Mittel scharf</option>
+                <option value="3">Sehr scharf</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="order">Reihenfolge</label>
+            <input type="number" id="order" name="order" value="0">
+        </div>
+        
+        <div class="form-group">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="vegetarian" name="vegetarian">
+                <label class="form-check-label" for="vegetarian">Vegetarisch 🥬</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="vegan" name="vegan">
+                <label class="form-check-label" for="vegan">Vegan 🌱</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="spicy" name="spicy">
+                <label class="form-check-label" for="spicy">Scharf 🌶️</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="gluten_free" name="gluten_free">
+                <label class="form-check-label" for="gluten_free">Glutenfrei 🌾</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="lactose_free" name="lactose_free">
+                <label class="form-check-label" for="lactose_free">Laktosefrei 🥛</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="kid_friendly" name="kid_friendly">
+                <label class="form-check-label" for="kid_friendly">Kinderfreundlich 👶</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="alcohol_free" name="alcohol_free">
+                <label class="form-check-label" for="alcohol_free">Alkoholfrei 🚫</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="contains_alcohol" name="contains_alcohol">
+                <label class="form-check-label" for="contains_alcohol">Alkoholisch 🍷</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="homemade" name="homemade">
+                <label class="form-check-label" for="homemade">Hausgemacht 🏠</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="sugar_free" name="sugar_free">
+                <label class="form-check-label" for="sugar_free">Zuckerfrei 🍯</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="recommended" name="recommended">
+                <label class="form-check-label" for="recommended">Empfohlen ⭐</label>
+            </div>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" name="is_lunch_special">
+                Mittagsangebot
+            </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" name="is_vegetarian">
+                Vegetarisch
+            </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" name="is_vegan">
+                Vegan
+            </label>
+        </div>
+
+        <div class="form-group checkbox-group">
+            <label>
+                <input type="checkbox" name="active" checked>
+                Aktiv
+            </label>
+        </div>
+        
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Speichern</button>
+            <a href="{{ url_for('admin_menu_items') }}" class="btn btn-secondary">Abbrechen</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.checkbox-group input[type="checkbox"] {
+    width: auto;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--gold);
+    color: var(--dark);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--light);
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+</style>
+{% endblock %}

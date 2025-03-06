@@ -1,0 +1,36 @@
+[2025-03-04 01:18:37] Starte Installation und Konfiguration von libmagic...
+[2025-03-04 01:18:37] Betriebssystem erkannt: windows
+[2025-03-04 01:18:37] Installation von libmagic und python-magic für Windows...
+[2025-03-04 01:18:38] Installation von python-magic-bin...
+[2025-03-04 01:18:40] Installation von python-magic-bin erfolgreich abgeschlossen.
+[2025-03-04 01:18:40] libmagic-Test erfolgreich: Die Bibliothek funktioniert korrekt.
+[2025-03-04 01:18:40] Installation der Sicherheitsabhängigkeiten aus security_requirements.txt...
+[2025-03-04 01:18:41] Sicherheitsabhängigkeiten erfolgreich installiert.
+[2025-03-04 01:18:41] Temporäre Ersatzfunktionen gefunden. Stelle security_utils-Import wieder her...
+[2025-03-04 01:18:41] security_utils-Funktionalität in app.py erfolgreich wiederhergestellt.
+[2025-03-04 01:18:41] Installation und Konfiguration von libmagic abgeschlossen.
+[2025-03-04 01:18:41] Sie können die Anwendung jetzt mit python app.py starten.
+[2025-03-04 01:19:57] Starte CSRF-Schutzverbesserungen...
+[2025-03-04 01:19:57] API-Schlüssel wurde generiert und in instance/api_key.txt gespeichert.
+[2025-03-04 01:19:57] API-Schlüssel wurde generiert und in instance/api_key.txt gespeichert.
+[2025-03-04 01:19:57] Fehler beim Modifizieren von app.py: Invalid format specifier
+[2025-03-04 01:19:57] Fehler bei der Implementierung der CSRF-Schutzverbesserungen.
+[2025-03-04 01:21:00] Starte CSRF-Schutzverbesserungen...
+[2025-03-04 01:21:00] API-Schlüssel wurde generiert und in instance/api_key.txt gespeichert.
+[2025-03-04 01:21:00] API-Schlüssel wurde generiert und in instance/api_key.txt gespeichert.
+[2025-03-04 01:21:00] app.py wurde erfolgreich modifiziert, um API-Schlüssel-Authentifizierung für AJAX-Anfragen zu implementieren.
+[2025-03-04 01:21:00] JavaScript-Hilfsdatei für API-Schlüssel-Authentifizierung erstellt: static/js/ajax_security.js
+[2025-03-04 01:21:00] API-Schlüssel-Route wurde erfolgreich zu app.py hinzugefügt.
+[2025-03-04 01:21:00] JavaScript wurde erfolgreich zum Template hinzugefügt.
+[2025-03-04 01:21:00] CSRF-Schutzverbesserungen wurden erfolgreich implementiert.
+[2025-03-04 01:21:13] Starte Produktionskonfiguration und Deaktivierung des Debug-Modus...
+[2025-03-04 01:21:13] Konfigurationsdateien wurden erstellt: instance/production.cfg und instance/development.cfg
+[2025-03-04 01:21:13] app.py wurde erfolgreich für die Verwendung von Konfigurationsdateien modifiziert.
+[2025-03-04 01:21:13] WSGI-Einstiegspunkt erstellt: wsgi.py
+[2025-03-04 01:21:13] Gunicorn-Konfigurationsdatei erstellt: gunicorn_config.py
+[2025-03-04 01:21:13] Startskripte erstellt: run_dev.sh, run_prod.sh, run_dev.bat, run_prod.bat
+[2025-03-04 01:21:13] Neue README.md mit Informationen zur Produktionsbereitstellung erstellt.
+[2025-03-04 01:21:13] requirements.txt enthält bereits WSGI-Server-Abhängigkeiten.
+[2025-03-04 01:21:13] Produktionskonfiguration und Deaktivierung des Debug-Modus abgeschlossen.
+[2025-03-04 01:21:13] Die Anwendung kann jetzt sicher in einer Produktionsumgebung bereitgestellt werden.
+[2025-03-04 01:21:13] Verwenden Sie die Startskripte run_dev.sh/bat für die Entwicklung und run_prod.sh/bat für die Produktion.

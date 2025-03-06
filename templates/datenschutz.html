@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="privacy-page">
+    <div class="privacy-content">
+        <section class="privacy-section fade-in" style="--animation-order: 1;">
+            <h1>Datenschutzerklärung</h1>
+            <p>Wir freuen uns sehr über Ihr Interesse an unserem Unternehmen. Datenschutz hat einen besonders hohen Stellenwert für die Geschäftsleitung des Restaurant ALAS.</p>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 2;">
+            <h2>1. Verantwortlicher</h2>
+            <p>Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:</p>
+            <p>Restaurant ALAS<br>
+            Bundesstr. 39<br>
+            94554 Moos<br>
+            Telefon: 09938 2320307<br>
+            E-Mail: info@restaurant-alas.de</p>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 3;">
+            <h2>2. Datenerfassung auf unserer Website</h2>
+            <h3>Cookies</h3>
+            <p>Unsere Website verwendet Cookies nur nach Ihrer ausdrücklichen Zustimmung.</p>
+            
+            <h3>Nutzer Statistiken</h3>
+            <p>Der Provider der Seiten erhebt und speichert automatisch Informationen, die Ihr Browser an uns übermittelt. Dies sind:</p>
+            <ul>
+                <li>Browsertyp</li>
+                <li>Verwendetes Betriebssystem</li>
+                <li>Referrer URL</li>
+                <li>IP-Adresse</li>
+            </ul>
+            <p>Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht vorgenommen.</p>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 4;">
+            <h2>3. Ihre Rechte</h2>
+            <p>Sie haben folgende Rechte:</p>
+            <ul>
+                <li>Recht auf Auskunft (Art. 15 DSGVO)</li>
+                <li>Recht auf Berichtigung (Art. 16 DSGVO)</li>
+                <li>Recht auf Löschung (Art. 17 DSGVO)</li>
+                <li>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
+                <li>Recht auf Datenübertragbarkeit (Art. 20 DSGVO)</li>
+                <li>Recht auf Widerspruch (Art. 21 DSGVO)</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 5;">
+            <h2>4. Kontaktformular</h2>
+            <p>Wenn Sie uns per Kontaktformular Anfragen zukommen lassen, werden Ihre Angaben aus dem Anfrageformular inklusive der von Ihnen dort angegebenen Kontaktdaten zwecks Bearbeitung der Anfrage und für den Fall von Anschlussfragen bei uns gespeichert. Diese Daten geben wir nicht ohne Ihre Einwilligung weiter.</p>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 6;">
+            <h2>5. Änderung unserer Datenschutzbestimmungen</h2>
+            <p>Wir behalten uns vor, diese Datenschutzerklärung anzupassen, damit sie stets den aktuellen rechtlichen Anforderungen entspricht oder um Änderungen unserer Leistungen in der Datenschutzerklärung umzusetzen, z.B. bei der Einführung neuer Services. Für Ihren erneuten Besuch gilt dann die neue Datenschutzerklärung.</p>
+        </section>
+
+        <section class="privacy-section fade-in" style="--animation-order: 7;">
+            <h2>6. Fragen zum Datenschutz</h2>
+            <p>Wenn Sie Fragen zum Datenschutz haben, schreiben Sie uns bitte eine E-Mail oder wenden Sie sich direkt an die für den Datenschutz verantwortliche Person in unserer Organisation.</p>
+        </section>
+    </div>
+</div>
+
+<style>
+.privacy-page {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+}
+
+.privacy-content {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.privacy-section {
+    margin-bottom: 30px;
+}
+
+.privacy-section:last-child {
+    margin-bottom: 0;
+}
+
+.privacy-section h1 {
+    color: #c17817;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+.privacy-section h2 {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.privacy-section h3 {
+    color: #333;
+    font-size: 1.2em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.privacy-section p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.privacy-section ul {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    padding-left: 20px;
+}
+
+.privacy-section li {
+    margin-bottom: 8px;
+}
+
+.privacy-section a {
+    color: #c17817;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.privacy-section a:hover {
+    color: #e19b4c;
+}
+
+@media (max-width: 768px) {
+    .privacy-page {
+        margin: 60px auto;
+    }
+
+    .privacy-content {
+        padding: 20px;
+    }
+
+    .privacy-section h1 {
+        font-size: 2em;
+    }
+
+    .privacy-section h2 {
+        font-size: 1.3em;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+    animation-fill-mode: both;
+    animation-delay: calc(0.5s * var(--animation-order));
+}
+</style>
+{% endblock %}

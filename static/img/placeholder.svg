@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="600" version="1.1" viewBox="0 0 800 600" xmlns="http://www.w3.org/2000/svg">
+ <rect width="800" height="600" fill="#f5f5f5"/>
+ <g transform="matrix(1.5 0 0 1.5 400 300)">
+  <path d="m-50-30h100v60h-100z" fill="none" stroke="#ccc" stroke-width="4"/>
+  <path d="m-35-15 20 20 10-10 30 30h-80z" fill="#ccc"/>
+  <circle cx="20" cy="-5" r="10" fill="#ccc"/>
+ </g>
+ <text x="400" y="400" text-anchor="middle" fill="#999" font-family="Arial" font-size="24">
+   Bild wird geladen...
+ </text>
+</svg>

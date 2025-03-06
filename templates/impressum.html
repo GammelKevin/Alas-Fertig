@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="impressum-page">
+    <div class="impressum-content">
+        <section class="impressum-section fade-in" style="--animation-order: 1;">
+            <h1>Impressum</h1>
+            <h2>Angaben gemäß § 5 TMG</h2>
+            <p>Restaurant ALAS<br>
+            Bundesstr. 39<br>
+            94554 Moos</p>
+            
+            <h3>Vertreten durch</h3>
+            <p>Anastasios Spathis</p>
+            
+            <h3>Kontakt</h3>
+            <p>Telefon: <a href="tel:+4909938230307">09938 2320307</a><br>
+            E-Mail: <a href="mailto:info@restaurant-alas.de">info@restaurant-alas.de</a></p>
+        </section>
+
+        <section class="impressum-section fade-in" style="--animation-order: 2;">
+            <h2>Umsatzsteuer-ID</h2>
+            <p>Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz:<br>
+            DE XXX XXX XXX</p>
+        </section>
+
+        <section class="impressum-section fade-in" style="--animation-order: 3;">
+            <h2>Aufsichtsbehörde</h2>
+            <p>Zuständige Aufsichtsbehörde:</p>
+            <p>Gewerbeaufsichtsamt bei der Regierung von Niederbayern<br>
+            Gestütstraße 10<br>
+            84028 Landshut</p>
+            <p>Telefon: <a href="tel:+498718080100">0871 808-01</a><br>
+            Fax: 0871 808-1799<br>
+            E-Mail: <a href="mailto:poststelle@reg-nb.bayern.de">poststelle@reg-nb.bayern.de</a><br>
+            Website: <a href="https://www.regierung.niederbayern.bayern.de/aufgaben/1838/index.html" target="_blank">www.regierung.niederbayern.bayern.de</a></p>
+        </section>
+
+        <section class="impressum-section fade-in" style="--animation-order: 4;">
+            <h2>Datenschutzaufsicht</h2>
+            <p>Für datenschutzrechtliche Belange ist das Bayerische Landesamt für Datenschutzaufsicht zuständig:</p>
+            <p>Bayerisches Landesamt für Datenschutzaufsicht (BayLDA)<br>
+            Promenade 18<br>
+            91522 Ansbach</p>
+            <p>Telefon: <a href="tel:+4998118009300">0981 180093-0</a><br>
+            Fax: 0981 180093-800<br>
+            Website: <a href="https://www.lda.bayern.de/de/kontakt.html" target="_blank">www.lda.bayern.de</a></p>
+        </section>
+
+        <section class="impressum-section fade-in" style="--animation-order: 5;">
+            <h2>Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
+            <p>Anastasios Spathis<br>
+            Bundesstr. 39<br>
+            94554 Moos</p>
+        </section>
+
+        <section class="impressum-section fade-in" style="--animation-order: 6;">
+            <h2>Streitschlichtung</h2>
+            <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" target="_blank">https://ec.europa.eu/consumers/odr</a><br>
+            Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
+
+            <p>Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+        </section>
+    </div>
+</div>
+
+<style>
+.impressum-page {
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+}
+
+.impressum-content {
+    background: #fff;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+}
+
+.impressum-section {
+    margin-bottom: 30px;
+}
+
+.impressum-section:last-child {
+    margin-bottom: 0;
+}
+
+.impressum-section h1 {
+    color: #c17817;
+    font-size: 2.5em;
+    margin-bottom: 30px;
+}
+
+.impressum-section h2 {
+    color: #333;
+    font-size: 1.5em;
+    margin-bottom: 15px;
+}
+
+.impressum-section h3 {
+    color: #333;
+    font-size: 1.2em;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.impressum-section p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.impressum-section a {
+    color: #c17817;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.impressum-section a:hover {
+    color: #e19b4c;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in-out;
+    animation-fill-mode: both;
+    animation-delay: calc(0.5s * var(--animation-order));
+}
+
+@media (max-width: 768px) {
+    .impressum-page {
+        margin: 60px auto;
+    }
+
+    .impressum-content {
+        padding: 20px;
+    }
+
+    .impressum-section h1 {
+        font-size: 2em;
+    }
+
+    .impressum-section h2 {
+        font-size: 1.3em;
+    }
+}
+</style>
+{% endblock %}

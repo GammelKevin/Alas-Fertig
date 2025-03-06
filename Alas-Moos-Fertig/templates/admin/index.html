@@ -1,0 +1,78 @@
+{% extends "admin/base.html" %}
+
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body">
+                <h5 class="card-title">Speisekarte verwalten 🍽️</h5>
+                <p class="card-text">Füge neue Gerichte hinzu oder bearbeite bestehende</p>
+                <a href="{{ url_for('admin_menu') }}" class="btn btn-light">Zur Speisekarte</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-success text-white">
+            <div class="card-body">
+                <h5 class="card-title">Kategorien verwalten 📑</h5>
+                <p class="card-text">Organisiere deine Menü-Kategorien</p>
+                <a href="{{ url_for('admin_categories') }}" class="btn btn-light">Zu den Kategorien</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card bg-info text-white">
+            <div class="card-body">
+                <h5 class="card-title">Öffnungszeiten 🕒</h5>
+                <p class="card-text">Aktualisiere die Öffnungszeiten</p>
+                <a href="{{ url_for('admin_hours') }}" class="btn btn-light">Zu den Öffnungszeiten</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    border-radius: 15px;
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-light {
+    color: #333;
+    font-weight: 500;
+}
+
+.btn-light:hover {
+    background-color: #f8f9fa;
+    color: #000;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.card-text {
+    margin-bottom: 1.5rem;
+}
+
+.bg-primary {
+    background: linear-gradient(45deg, #c17817, #e69019) !important;
+}
+
+.bg-success {
+    background: linear-gradient(45deg, #2ecc71, #27ae60) !important;
+}
+
+.bg-info {
+    background: linear-gradient(45deg, #3498db, #2980b9) !important;
+}
+</style>
+{% endblock %}

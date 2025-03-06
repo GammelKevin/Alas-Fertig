@@ -1,0 +1,54 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% block header %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <!-- Menü-Verwaltung -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Menü-Verwaltung</h5>
+                    <p class="card-text">Verwalten Sie hier Ihre Menüeinträge und Kategorien.</p>
+                    <a href="{{ url_for('admin.menu') }}" class="btn btn-primary">Zum Menü</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Öffnungszeiten -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Öffnungszeiten</h5>
+                    <p class="card-text">Bearbeiten Sie hier Ihre Öffnungszeiten und Urlaubszeiten.</p>
+                    <a href="{{ url_for('admin.opening_hours') }}" class="btn btn-primary">Zu den Öffnungszeiten</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Galerie -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Galerie</h5>
+                    <p class="card-text">Verwalten Sie hier Ihre Bildergalerie.</p>
+                    <a href="{{ url_for('admin.gallery') }}" class="btn btn-primary">Zur Galerie</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistiken -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statistiken</h5>
+                    <p class="card-text">Sehen Sie hier die Besucherzahlen und Galerie-Aufrufe.</p>
+                    <a href="{{ url_for('admin.statistics') }}" class="btn btn-primary">Zu den Statistiken</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

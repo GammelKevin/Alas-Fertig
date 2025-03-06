@@ -1,0 +1,82 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="admin-section">
+    <h2>Admin Dashboard</h2>
+    
+    <div class="dashboard-grid">
+        <a href="{{ url_for('admin_menu_items') }}" class="dashboard-card">
+            <div class="card-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3>Speisekarte</h3>
+            <p>Gerichte und Getränke verwalten</p>
+        </a>
+        
+        <a href="{{ url_for('admin_menu_categories') }}" class="dashboard-card">
+            <div class="card-icon">
+                <i class="fas fa-list"></i>
+            </div>
+            <h3>Kategorien</h3>
+            <p>Menü-Kategorien verwalten</p>
+        </a>
+        
+        <a href="{{ url_for('admin_opening_hours') }}" class="dashboard-card">
+            <div class="card-icon">
+                <i class="fas fa-clock"></i>
+            </div>
+            <h3>Öffnungszeiten</h3>
+            <p>Öffnungszeiten bearbeiten</p>
+        </a>
+    </div>
+</div>
+
+<style>
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.dashboard-card {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--light);
+    transition: transform 0.2s;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.card-icon i {
+    font-size: 24px;
+    color: var(--dark);
+}
+
+.dashboard-card h3 {
+    margin: 0 0 0.5rem 0;
+    color: var(--gold);
+}
+
+.dashboard-card p {
+    margin: 0;
+    opacity: 0.8;
+}
+</style>
+{% endblock %}

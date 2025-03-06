@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="api-key" content="{{ api_key }}">
+    <title>{% block title %}Restaurant ALAS - Griechische Spezialitäten in Moos{% endblock %}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/css/glightbox.min.css" rel="stylesheet">
+    <style>
+        /* Entferne Scrollbars */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Verhindere horizontales Scrollen */
+        .container {
+            width: 100%;
+            max-width: 100vw;
+            margin: 0;
+            padding: 0 20px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+        }
+
+        /* Navigation Styles */
+        .navbar {
+            background-color: rgb(0, 0, 0);
+            transition: background-color 0.3s ease;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            padding: 15px 0;
+        }
+
+        .navbar.transparent {
+            background-color: rgb(0, 0, 0);
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 700;
+            transition: color 0.3s ease;
+            padding: 10px 0;
+            letter-spacing: 1px;
+        }
+
+        .nav-brand:hover {
+            color: #c17817;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            margin-left: auto;
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        .nav-links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+            padding: 0.5rem 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            height: 2px;
+            width: 0;
+            bottom: 0;
+            left: 0;
+            background-color: #c17817;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #c17817;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .menu-btn {
+            display: none;
+            cursor: pointer;
+            width: 30px;
+            height: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .menu-btn__burger,
+        .menu-btn__burger::before,
+        .menu-btn__burger::after {
+            width: 100%;
+            height: 2px;
+            background-color: #fff;
+            position: absolute;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .menu-btn__burger {
+            transform: translateY(-50%);
+        }
+
+        .menu-btn__burger::before {
+            content: '';
+            top: -8px;
+        }
+
+        .menu-btn__burger::after {
+            content: '';
+            top: 8px;
+        }
+
+        .menu-btn.open .menu-btn__burger {
+            transform: translateX(-50px);
+            background: transparent;
+        }
+
+        .menu-btn.open .menu-btn__burger::before {
+            transform: rotate(45deg) translate(35px, -35px);
+        }
+
+        .menu-btn.open .menu-btn__burger::after {
+            transform: rotate(-45deg) translate(35px, 35px);
+        }
+
+        @media (max-width: 768px) {
+            .menu-btn {
+                display: block;
+            }
+
+            .nav-links {
+                background: rgba(0, 0, 0, 0.9);
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 80%;
+                height: 100vh;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                transition: right 0.3s ease;
+                margin: 0;
+                padding: 2rem;
+            }
+
+            .nav-links.active {
+                right: 0;
+            }
+
+            .nav-links a {
+                font-size: 1.5rem;
+                margin: 1rem 0;
+            }
+        }
+
+        /* Content Padding für alle Seiten außer der Startseite */
+        .content-wrapper {
+            padding-top: 120px; /* Genug Platz für den Header */
+        }
+
+        /* Hero-Section (Startseite) braucht kein Padding */
+        .hero-section {
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-sections {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            font-family: 'Playfair Display', serif;
+            color: #fff;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section p {
+            font-family: 'Poppins', sans-serif;
+            color: #999;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #c17817;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            color: #fff;
+            font-size: 1.5rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: #c17817;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .footer-links a {
+            color: #999;
+            text-decoration: none;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #c17817;
+        }
+
+        .copyright {
+            color: #999;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .footer-sections {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-section {
+                min-width: 100%;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-links {
+                justify-content: center;
+            }
+        }
+
+        /* Animation Styles */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Basis-Animation für alle Content-Elemente */
+        .content-fade-in {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .menu-item, .gallery-item, .impressum-section, .contact-info, 
+        .about-section, .feature-box, .opening-hours {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        /* Verzögerte Animation für aufeinanderfolgende Elemente - Generated by JS */
+        .animation-delay-1 { animation-delay: 0.1s; }
+        .animation-delay-2 { animation-delay: 0.2s; }
+        .animation-delay-3 { animation-delay: 0.3s; }
+        .animation-delay-4 { animation-delay: 0.4s; }
+        .animation-delay-5 { animation-delay: 0.5s; }
+        /* ... weitere Delays werden dynamisch generiert ... */
+
+        /* Zusätzliches Styling für Sektionen */
+        section {
+            padding-top: 40px; /* Zusätzliches Padding für Sektionen */
+        }
+
+        .section-title {
+            padding-top: 20px; /* Zusätzliches Padding für Überschriften */
+        }
+
+        .logo {
+            height: 100px;  /* Von 80px auf 100px erhöht */
+            width: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand {
+            padding: 0;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                height: 70px;  /* Von 60px auf 70px erhöht für mobile Geräte */
+            }
+        }
+
+        /* Cookie-Banner Styles */
+        .cookie-consent-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 20px;
+            z-index: 10000;
+            display: none;
+            box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .cookie-consent-banner.show {
+            display: block;
+            animation: slideUp 0.5s forwards;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .cookie-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cookie-text {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .cookie-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cookie-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .cookie-btn-accept-all {
+            background-color: #c17817;
+            color: white;
+        }
+
+        .cookie-btn-accept-all:hover {
+            background-color: #a0651c;
+        }
+
+        .cookie-btn-accept-necessary {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        .cookie-btn-accept-necessary:hover {
+            background-color: #e3e3e3;
+        }
+
+        .cookie-btn-settings {
+            background-color: transparent;
+            color: #fff;
+            border: 1px solid #fff;
+        }
+
+        .cookie-btn-settings:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .cookie-settings-panel {
+            display: none;
+            background-color: #f9f9f9;
+            color: #333;
+            padding: 20px;
+            margin-top: 15px;
+            border-radius: 5px;
+        }
+
+        .cookie-settings-panel.show {
+            display: block;
+        }
+
+        .cookie-type {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .cookie-type:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .cookie-type-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .cookie-type-title {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .cookie-type-toggle {
+            display: flex;
+            align-items: center;
+        }
+
+        .cookie-type-description {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #c17817;
+        }
+
+        input:disabled + .toggle-slider {
+            background-color: #a0651c;
+            cursor: not-allowed;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='images/Alas_Logo.png') }}" alt="Restaurant Alas Logo" class="logo">
+            </a>
+            <div class="nav-links">
+                <a href="/" {% if request.endpoint == 'index' %}class="active"{% endif %}>Home</a>
+                <a href="/speisekarte" {% if request.endpoint == 'speisekarte' %}class="active"{% endif %}>Speisekarte</a>
+                <a href="/galerie" {% if request.endpoint == 'galerie' %}class="active"{% endif %}>Galerie</a>
+                <a href="/#about">Über Uns</a>
+                <a href="/#opening-hours">Öffnungszeiten</a>
+            </div>
+            <div class="menu-btn">
+                <div class="menu-btn__burger"></div>
+            </div>
+        </div>
+    </nav>
+
+    {% if not request.endpoint == 'index' %}
+    <div class="content-wrapper">
+    {% endif %}
+        {% block content %}{% endblock %}
+    {% if not request.endpoint == 'index' %}
+    </div>
+    {% endif %}
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-sections">
+                <div class="footer-section">
+                    <h3>Kontakt</h3>
+                    <p>Telefon: <a href="tel:+4909938230307">09938 2320307</a></p>
+                    <p>E-Mail: <a href="mailto:info@restaurant-alas.de">info@restaurant-alas.de</a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Adresse</h3>
+                    <p>Bundesstr. 39</p>
+                    <p>94554 Moos, Niederbayern</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Folgen Sie uns</h3>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/p/Griechisches-Restaurant-ALAS-61552077044507/?locale=de_DE" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+                        <a href="https://www.instagram.com/griechischesrestaurantalas/" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-links">
+                    <a href="{{ url_for('impressum') }}">Impressum</a>
+                    <a href="{{ url_for('datenschutz') }}">Datenschutz</a>
+                </div>
+                <p class="copyright">&copy; {{ now.year }} Restaurant ALAS. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cookie-consent-banner">
+        <div class="cookie-content">
+            <div class="cookie-text">
+                Diese Website verwendet Cookies, um Ihre Erfahrung zu verbessern. Durch die Nutzung dieser Website stimmen Sie der Verwendung von Cookies zu.
+            </div>
+            <div class="cookie-buttons">
+                <button class="cookie-btn cookie-btn-accept-all">Alle Cookies akzeptieren</button>
+                <button class="cookie-btn cookie-btn-accept-necessary">Nur notwendige Cookies akzeptieren</button>
+                <button class="cookie-btn cookie-btn-settings">Cookie-Einstellungen</button>
+            </div>
+            <div class="cookie-settings-panel">
+                <div class="cookie-type">
+                    <div class="cookie-type-header">
+                        <span class="cookie-type-title">Notwendige Cookies</span>
+                        <span class="cookie-type-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="necessary-cookies" checked disabled>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="cookie-type-description">
+                        Diese Cookies sind notwendig für die grundlegende Funktion der Website.
+                    </div>
+                </div>
+                <div class="cookie-type">
+                    <div class="cookie-type-header">
+                        <span class="cookie-type-title">Analyse Cookies</span>
+                        <span class="cookie-type-toggle">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="analytics-cookies">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </span>
+                    </div>
+                    <div class="cookie-type-description">
+                        Diese Cookies werden verwendet, um die Nutzung der Website zu analysieren.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simplelightbox/2.14.2/simple-lightbox.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/glightbox@3.2.0/dist/js/glightbox.min.js"></script>
+    
+    <!-- Cookie Consent Banner Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cookie-Funktionen
+            function setCookie(name, value, days) {
+                var expires = "";
+                if (days) {
+                    var date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    expires = "; expires=" + date.toUTCString();
+                }
+                document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=Strict";
+            }
+
+            function getCookie(name) {
+                var nameEQ = name + "=";
+                var ca = document.cookie.split(';');
+                for(var i=0; i < ca.length; i++) {
+                    var c = ca[i];
+                    while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+                    if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+                }
+                return null;
+            }
+
+            // Cookie-Banner Elemente
+            const cookieBanner = document.querySelector('.cookie-consent-banner');
+            const acceptAllBtn = document.querySelector('.cookie-btn-accept-all');
+            const acceptNecessaryBtn = document.querySelector('.cookie-btn-accept-necessary');
+            const settingsBtn = document.querySelector('.cookie-btn-settings');
+            const settingsPanel = document.querySelector('.cookie-settings-panel');
+            const analyticsCookies = document.getElementById('analytics-cookies');
+
+            // Cookie-Einstellungen prüfen
+            const cookieConsent = getCookie('cookie-consent');
+            if (!cookieConsent) {
+                setTimeout(function() {
+                    cookieBanner.classList.add('show');
+                }, 1000);
+            } else {
+                // Cookie-Einstellungen aus vorhandenen Cookies laden
+                const settings = JSON.parse(cookieConsent);
+                analyticsCookies.checked = settings.analytics;
+                
+                // Wenn Cookies akzeptiert wurden, entsprechende Tracking-Skripte laden
+                if (settings.analytics) {
+                    // Hier könnten Analytics-Skripte geladen werden
+                    console.log('Analytics-Cookies aktiviert');
+                }
+            }
+
+            // Event Listener für die Buttons
+            settingsBtn.addEventListener('click', function() {
+                settingsPanel.classList.toggle('show');
+            });
+
+            acceptAllBtn.addEventListener('click', function() {
+                const settings = {
+                    necessary: true,
+                    analytics: true
+                };
+                
+                setCookie('cookie-consent', JSON.stringify(settings), 365);
+                cookieBanner.classList.remove('show');
+                
+                // Aktiviere Analytics
+                console.log('Alle Cookies akzeptiert');
+                // Hier könnten Analytics-Skripte geladen werden
+            });
+
+            acceptNecessaryBtn.addEventListener('click', function() {
+                const settings = {
+                    necessary: true,
+                    analytics: false
+                };
+                
+                setCookie('cookie-consent', JSON.stringify(settings), 365);
+                cookieBanner.classList.remove('show');
+                
+                console.log('Nur notwendige Cookies akzeptiert');
+            });
+
+            // Event Listener für die Speicherung der Einstellungen im Settings-Panel
+            document.querySelector('.cookie-settings-panel').addEventListener('change', function(e) {
+                if (e.target.type === 'checkbox') {
+                    const settings = {
+                        necessary: true,
+                        analytics: analyticsCookies.checked
+                    };
+                    
+                    setCookie('cookie-consent', JSON.stringify(settings), 365);
+                    
+                    console.log('Cookie-Einstellungen aktualisiert:', settings);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // Mobile Menu Toggle
+        const menuBtn = document.querySelector('.menu-btn');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('open');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('open');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    </script>
+    {% block extra_scripts %}{% endblock %}
+    
+    <!-- Analytics Tracking Script -->
+    <script>
+        // Funktion zum Prüfen der Analytics-Zustimmung
+        function hasAnalyticsConsent() {
+            // Überprüfen, ob Analytics-Cookies akzeptiert wurden
+            const cookieConsent = getCookie('cookie-consent');
+            if (cookieConsent) {
+                try {
+                    const settings = JSON.parse(cookieConsent);
+                    if (settings.analytics === true) {
+                        // Für die Persistenz auch im localStorage speichern
+                        localStorage.setItem('analytics_consent', 'true');
+                        return true;
+                    } else {
+                        localStorage.removeItem('analytics_consent');
+                        return false;
+                    }
+                } catch (e) {
+                    console.error('Fehler beim Parsen der Cookie-Einstellungen:', e);
+                    return false;
+                }
+            }
+            return localStorage.getItem('analytics_consent') === 'true';
+        }
+
+        // Cookie-Helper-Funktion
+        function getCookie(name) {
+            const nameEQ = name + "=";
+            const ca = document.cookie.split(';');
+            for (let i = 0; i < ca.length; i++) {
+                let c = ca[i];
+                while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+                if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+            }
+            return null;
+        }
+
+        // Tracking-Funktionalität
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("Analytics-Skript geladen");
+            
+            // Nur tracken, wenn Zustimmung vorliegt
+            if (!hasAnalyticsConsent()) {
+                console.log("Keine Analytics-Zustimmung vorhanden - Tracking deaktiviert");
+                return;
+            }
+            
+            console.log("Analytics-Zustimmung vorhanden - Tracking aktiviert");
+            
+            // Verweildauer-Tracking initialisieren
+            initializeVisitDurationTracking();
+        });
+
+        // Tracking-Funktionen
+        function initializeVisitDurationTracking() {
+            // Tracking nur starten, wenn die Seite im Browser und nicht im Vorschau-Modus angezeigt wird
+            if (document.visibilityState !== 'visible') {
+                return;
+            }
+
+            // Aktuelle Seite ermitteln
+            const currentPage = window.location.pathname;
+            
+            // Statische Ressourcen und API-Routen ausschließen
+            if (currentPage.startsWith('/static/') || 
+                currentPage.startsWith('/api/') || 
+                currentPage.startsWith('/admin/') ||
+                currentPage.startsWith('/admin-panel/') ||
+                currentPage.endsWith('.jpg') ||
+                currentPage.endsWith('.png') ||
+                currentPage.endsWith('.css') ||
+                currentPage.endsWith('.js') ||
+                currentPage === '/get_visit_id' ||
+                currentPage === '/update_visit_duration' ||
+                currentPage === '/get_api_key_token' ||
+                currentPage === '/track_image_view') {
+                console.log(`Tracking übersprungen für ${currentPage}`);
+                return;
+            }
+            
+            // Prüfen, ob Cookies erlaubt sind
+            if (typeof localStorage === 'undefined') {
+                console.log('localStorage nicht verfügbar, Tracking deaktiviert');
+                return;
+            }
+            
+            // Prüfen, ob diese Seite bereits in dieser Session getrackt wurde
+            let trackedPages = {};
+            try {
+                const stored = localStorage.getItem('tracked_pages');
+                if (stored) {
+                    trackedPages = JSON.parse(stored);
+                    
+                    // Wenn die Seite heute bereits getrackt wurde und wir eine Besuchs-ID haben,
+                    // können wir das Tracking überspringen
+                    if (trackedPages[currentPage]) {
+                        console.log(`Seite ${currentPage} wurde bereits getrackt, Tracking wird nicht erneut gestartet`);
+                        
+                        // Trotzdem die Dauer-Aktualisierung starten, aber keine neue Besuchs-ID anfordern
+                        const visitId = trackedPages[currentPage];
+                        if (visitId) {
+                            startDurationTracking(visitId);
+                        }
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error('Fehler beim Lesen der getrackte Seiten:', e);
+                // Bei Fehlern localStorage zurücksetzen
+                localStorage.removeItem('tracked_pages');
+                trackedPages = {};
+            }
+            
+            // Nicht die Startseite erneut tracken, wenn sie bereits getrackt wurde
+            if (currentPage === '/' && localStorage.getItem('homepage_tracked')) {
+                console.log('Startseite bereits getrackt, Tracking wird nicht erneut gestartet');
+                return;
+            }
+            
+            // Markiere die Startseite als getrackt, aber nur wenn wir tatsächlich auf der Startseite sind
+            if (currentPage === '/') {
+                localStorage.setItem('homepage_tracked', 'true');
+            }
+            
+            // Warten, bis die API-Key geladen ist
+            setTimeout(function() {
+                // API-Key holen
+                const apiKey = document.querySelector('meta[name="api-key"]')?.content;
+                
+                // Besuchs-ID per AJAX von der Serverseite holen
+                fetch('/get_visit_id', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-API-Key': apiKey || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const visitId = data.visit_id;
+                    const needsTracking = data.needs_tracking === true;
+                    
+                    // Wenn ein Fehler aufgetreten ist oder keine Besuchs-ID benötigt wird, abbrechen
+                    if (data.error) {
+                        console.log(`Tracking-Fehler: ${data.error}`);
+                        return;
+                    }
+                    
+                    // Wenn keine Besuchs-ID erhalten wurde und Tracking nicht notwendig ist, abbrechen
+                    if (!visitId && !needsTracking) {
+                        console.log("Kein Tracking notwendig, Server meldet keine Besuchs-ID erforderlich");
+                        return;
+                    }
+                    
+                    console.log(`Tracking gestartet für Besuch ${visitId}, API-Key vorhanden: ${!!apiKey}, Tracking nötig: ${needsTracking}`);
+                    
+                    // Wenn eine Besuchs-ID vorhanden ist, Seite als getrackt markieren
+                    if (visitId) {
+                        trackedPages[currentPage] = visitId;
+                        localStorage.setItem('tracked_pages', JSON.stringify(trackedPages));
+                    }
+                    
+                    // Nur mit dem Tracking fortfahren, wenn es nötig ist oder eine ID vorhanden ist
+                    if (needsTracking || visitId) {
+                        startDurationTracking(visitId);
+                    } else {
+                        console.log("Server meldet, dass kein neues Tracking nötig ist - verwende nur bestehende Besuchs-ID");
+                    }
+                })
+                .catch(error => {
+                    console.error('Fehler beim Abrufen der Besuchs-ID:', error);
+                });
+            }, 500);
+        }
+
+        function startDurationTracking(visitId) {
+            // Falls keine visitId übergeben wurde, abbrechen
+            if (!visitId) {
+                console.log('Keine Besuchs-ID vorhanden, Dauer-Tracking wird nicht gestartet');
+                return;
+            }
+            
+            // API-Key holen
+            const apiKey = document.querySelector('meta[name="api-key"]')?.content;
+            
+            // Startzeit für diese Seite setzen
+            const pageStartTime = Date.now();
+            
+            // Gesamte Besuchsdauer aus dem localStorage abrufen oder neu initialisieren
+            let totalSessionDuration = parseInt(localStorage.getItem('session_duration') || '0', 10);
+            let sessionStartTime = parseInt(localStorage.getItem('session_start_time') || pageStartTime.toString(), 10);
+            let lastUpdateTime = parseInt(localStorage.getItem('last_update_time') || '0', 10);
+            
+            console.log(`Bestehende Session: Gesamtdauer=${totalSessionDuration}s, Start=${new Date(sessionStartTime).toISOString()}`);
+            
+            // Aktuelle Seite im Session-Tracking speichern
+            localStorage.setItem('current_visit_id', visitId);
+            localStorage.setItem('session_start_time', sessionStartTime.toString());
+            
+            // Funktion zum Aktualisieren der Verweildauer
+            function updateDuration() {
+                const currentTime = Date.now();
+                
+                // Zeit auf dieser Seite berechnen
+                const pageTimeSeconds = Math.floor((currentTime - pageStartTime) / 1000);
+                
+                // Gesamtzeit der Session berechnen
+                const totalTimeSeconds = Math.floor((currentTime - sessionStartTime) / 1000);
+                
+                // Nur aktualisieren, wenn sich die Dauer geändert hat und mindestens alle 10 Sekunden
+                const timeSinceLastUpdate = Math.floor((currentTime - lastUpdateTime) / 1000);
+                
+                if (timeSinceLastUpdate >= 10) { // Alle 10 Sekunden aktualisieren
+                    console.log(`Aktualisiere Verweildauer: Seite=${pageTimeSeconds}s, Gesamt=${totalTimeSeconds}s`);
+                    
+                    // Aktualisierte Dauer im localStorage speichern
+                    localStorage.setItem('session_duration', totalTimeSeconds.toString());
+                    localStorage.setItem('last_update_time', currentTime.toString());
+                    
+                    // Bildschirmgröße erfassen
+                    const screenWidth = window.screen.width;
+                    const screenHeight = window.screen.height;
+                    
+                    // Daten an den Server senden
+                    fetch('/update_visit_duration', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-API-Key': apiKey,
+                            'X-CSRFToken': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({
+                            visit_id: visitId,
+                            duration: totalTimeSeconds, // Gesamte Session-Dauer senden
+                            screen_width: screenWidth,
+                            screen_height: screenHeight
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Verweildauer-Update erfolgreich:', data);
+                        lastUpdateTime = currentTime;
+                    })
+                    .catch(error => {
+                        console.error('Fehler beim Aktualisieren der Verweildauer:', error);
+                    });
+                }
+            }
+            
+            // Starte regelmäßige Aktualisierung
+            const updateInterval = setInterval(updateDuration, 5000);
+            
+            // Bei Seitenverlassen oder Schließen die aktuelle Verweildauer speichern
+            window.addEventListener('beforeunload', updateDuration);
+        }
+    </script>
+
+    <script>
+        // Animation delays dynamisch setzen
+        document.addEventListener('DOMContentLoaded', function() {
+            const fadeElements = document.querySelectorAll('.content-fade-in, .menu-items .menu-item, .gallery-grid .gallery-item, .impressum-content > *, .about-features .feature-box');
+            fadeElements.forEach((el, index) => {
+                el.style.animationDelay = `${(index % 30) * 0.1}s`;
+            });
+        });
+    </script>
+
+    <!-- AJAX-Sicherheit für API-Schlüssel -->
+    <script src="{{ url_for('static', filename='js/ajax_security.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+
+{% block title %}Galerie - Restaurant ALAS{% endblock %}
+
+{% block content %}
+<div class="gallery-container">
+    <div class="gallery-header">
+        <h1 style="color: rgb(193, 120, 23); text-shadow: rgb(255, 255, 255) 2px 2px 0px;">Unsere Galerie</h1>
+        <div class="welcome-section">
+            <p class="gallery-description">
+                Entdecken Sie unser Restaurant in Bildern. Genießen Sie unseren wunderschönen Außenbereich mit mediterranem Flair, 
+                perfekt für warme Sommertage und laue Abende. Erleben Sie auch unseren gemütlichen Innenbereich und lassen Sie sich 
+                von der Atmosphäre verzaubern.
+            </p>
+        </div>
+    </div>
+
+    {% for category in categories %}
+    <div class="gallery-section">
+        <h2>{{ category.display_name }}</h2>
+        <p class="category-description">{{ category.description }}</p>
+        
+        <div class="image-grid">
+            {% for image in images if image.category_id == category.id %}
+            <div class="image-card" data-image-id="{{ image.id }}" data-title="{{ image.title }}" data-description="{{ image.description }}" data-image-path="{{ url_for('static', filename=image.image_path) }}" data-is-outdoor="{{ 'true' if image.is_outdoor else 'false' }}">
+                <div class="image-preview">
+                    <img src="{{ url_for('static', filename=image.image_path) }}" 
+                         alt="{{ image.title }}"
+                         loading="lazy"
+                         onclick="openImageModal(this)">
+                    {% if image.is_outdoor %}
+                    <span class="outdoor-badge">Außenbereich</span>
+                    {% endif %}
+                </div>
+                <div class="image-info">
+                    <h3>{{ image.title }}</h3>
+                    <p>{{ image.description }}</p>
+                </div>
+            </div>
+            {% else %}
+            <div class="no-images-message">
+                <p>Noch keine Bilder in dieser Kategorie.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Image Modal -->
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    
+    <!-- Navigation arrows -->
+    <div class="nav-arrow prev-arrow" id="prevArrow">&#10094;</div>
+    <div class="nav-arrow next-arrow" id="nextArrow">&#10095;</div>
+    
+    <div class="modal-content">
+        <img id="modalImage" src="" alt="">
+        <div class="modal-info">
+            <h3 id="modalTitle"></h3>
+            <p id="modalDescription"></p>
+        </div>
+    </div>
+</div>
+
+<style>
+.gallery-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.gallery-header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 20px 0;
+}
+
+.gallery-header h1 {
+    font-size: 48px;
+    margin-bottom: 30px;
+    font-family: "Playfair Display", serif;
+}
+
+.welcome-section {
+    background: white;
+    border-radius: 10px;
+    padding: 30px;
+    margin: 20px auto;
+    max-width: 800px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+.gallery-description {
+    color: #666;
+    line-height: 1.6;
+    margin: 0;
+    font-size: 1.1em;
+}
+
+.gallery-section {
+    margin-bottom: 50px;
+}
+
+.gallery-section h2 {
+    color: #333;
+    margin-bottom: 15px;
+    position: relative;
+    display: inline-block;
+}
+
+.gallery-section h2:after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #c17817;
+}
+
+.category-description {
+    color: #666;
+    margin-bottom: 20px;
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.image-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.image-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.image-preview {
+    position: relative;
+    height: 250px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.image-preview:hover img {
+    transform: scale(1.05);
+}
+
+.outdoor-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(193, 120, 23, 0.9);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8em;
+}
+
+.image-info {
+    padding: 15px;
+}
+
+.image-info h3 {
+    margin: 0 0 10px;
+    color: #333;
+    font-size: 1.2em;
+}
+
+.image-info p {
+    color: #666;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.no-images-message {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 30px;
+    background: #f8f9fa;
+    border-radius: 10px;
+    color: #666;
+}
+
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    padding: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    margin: auto;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal-content img {
+    width: 100%;
+    height: auto;
+    max-height: 70vh;
+    object-fit: contain;
+}
+
+.modal-info {
+    padding: 20px;
+    background: white;
+}
+
+.close {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* Navigation Arrows */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+    font-size: 35px;
+    cursor: pointer;
+    z-index: 1001;
+    background-color: rgba(0, 0, 0, 0.5);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.nav-arrow:hover {
+    background-color: rgba(193, 120, 23, 0.8);
+}
+
+.prev-arrow {
+    left: 20px;
+}
+
+.next-arrow {
+    right: 20px;
+}
+
+.modal-fade {
+    opacity: 0;
+}
+
+@media (max-width: 768px) {
+    .image-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+    }
+    
+    .nav-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 25px;
+    }
+    
+    .prev-arrow {
+        left: 10px;
+    }
+    
+    .next-arrow {
+        right: 10px;
+    }
+}
+</style>
+
+<script>
+// Globale Variable zum Speichern des aktuellen Bildes
+let currentImageIndex = 0;
+let allImages = [];
+
+// Beim Laden der Seite alle Bilder sammeln
+document.addEventListener('DOMContentLoaded', function() {
+    allImages = Array.from(document.querySelectorAll('.image-card'));
+});
+
+function openImageModal(imgElement) {
+    const modal = document.getElementById('imageModal');
+    
+    // Finde die Karte des angeklickten Bildes
+    const imageCard = imgElement.closest('.image-card');
+    const imageId = imageCard.dataset.imageId;
+    
+    // Finde den Index des Bildes im allImages-Array
+    currentImageIndex = allImages.findIndex(card => card.dataset.imageId === imageId);
+    
+    // Zeige das Modal
+    modal.style.display = "flex";
+    
+    // Lade das aktuelle Bild
+    loadCurrentImage();
+    
+    // Track view
+    trackImageView(imageId);
+}
+
+function loadCurrentImage() {
+    const imageCard = allImages[currentImageIndex];
+    const modalImg = document.getElementById('modalImage');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDesc = document.getElementById('modalDescription');
+    const modalContent = document.querySelector('.modal-content');
+    
+    // Fade-Effekt
+    modalContent.classList.add('modal-fade');
+    
+    // Nach einer kurzen Verzögerung das neue Bild laden und einblenden
+    setTimeout(() => {
+        modalImg.src = imageCard.dataset.imagePath;
+        modalTitle.textContent = imageCard.dataset.title;
+        modalDesc.textContent = imageCard.dataset.description;
+        
+        // Fade-Effekt entfernen
+        modalContent.classList.remove('modal-fade');
+        
+        // Tracking
+        trackImageView(imageCard.dataset.imageId);
+    }, 300);
+}
+
+function showPreviousImage() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+    } else {
+        // Gehe zum letzten Bild, wenn wir am Anfang sind
+        currentImageIndex = allImages.length - 1;
+    }
+    loadCurrentImage();
+}
+
+function showNextImage() {
+    if (currentImageIndex < allImages.length - 1) {
+        currentImageIndex++;
+    } else {
+        // Gehe zum ersten Bild, wenn wir am Ende sind
+        currentImageIndex = 0;
+    }
+    loadCurrentImage();
+}
+
+document.querySelector('.close').onclick = function() {
+    document.getElementById('imageModal').style.display = "none";
+}
+
+document.getElementById('prevArrow').onclick = function() {
+    showPreviousImage();
+}
+
+document.getElementById('nextArrow').onclick = function() {
+    showNextImage();
+}
+
+// Tastatureingaben für Navigation
+document.addEventListener('keydown', function(event) {
+    const modal = document.getElementById('imageModal');
+    
+    // Nur reagieren, wenn das Modal geöffnet ist
+    if (modal.style.display === "flex") {
+        if (event.key === "ArrowLeft") {
+            showPreviousImage();
+        } else if (event.key === "ArrowRight") {
+            showNextImage();
+        } else if (event.key === "Escape") {
+            modal.style.display = "none";
+        }
+    }
+});
+
+window.onclick = function(event) {
+    const modal = document.getElementById('imageModal');
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function trackImageView(imageId) {
+    // Prüfen, ob dieses Bild bereits getrackt wurde
+    const trackedImages = JSON.parse(localStorage.getItem('tracked_images') || '{}');
+    const currentDate = new Date().toISOString().split('T')[0]; // Aktuelles Datum YYYY-MM-DD
+    
+    // Bild-ID mit Datum als Schlüssel
+    const trackingKey = `${imageId}_${currentDate}`;
+    
+    if (trackedImages[trackingKey]) {
+        console.log(`Bild ${imageId} wurde heute bereits angesehen - kein erneutes Tracking`);
+        return; // Tracking überspringen
+    }
+    
+    // API-Key holen
+    const apiKey = document.querySelector('meta[name="api-key"]')?.content;
+    
+    // Das Bild als getrackt markieren
+    trackedImages[trackingKey] = true;
+    localStorage.setItem('tracked_images', JSON.stringify(trackedImages));
+    
+    // Tracking-Anfrage senden
+    fetch(`/track_image_view/${imageId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-API-Key': apiKey || ''
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(`Bild ${imageId} erfolgreich getrackt:`, data);
+    })
+    .catch(error => {
+        console.error(`Fehler beim Tracking von Bild ${imageId}:`, error);
+    });
+}
+</script>
+{% endblock %}

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .story-section {
+        padding: 100px 0;
+        background: #f9f9f9;
+    }
+
+    .story-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .story-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.5em;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .story-content {
+        font-size: 1.1em;
+        line-height: 1.8;
+        color: #666;
+    }
+
+    .story-image {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        margin: 40px auto;
+        display: block;
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+
+    .story-quote {
+        font-style: italic;
+        font-size: 1.2em;
+        color: #c17817;
+        text-align: center;
+        margin: 40px 0;
+        padding: 20px;
+        border-left: 4px solid #c17817;
+        background: #fff;
+    }
+</style>
+
+<section class="story-section">
+    <div class="story-container">
+        <h1 class="story-title">Die Bedeutung von Salz in der griechischen Kultur</h1>
+        
+        <div class="story-content">
+            <p>Salz – das Herzstück der griechisch-mediterranen Küche. Tauchen Sie ein in die unverkennbaren Geschmacksnuancen der griechischen Kulinarik, in der Salz eine Schlüsselrolle spielt. Von herzhaften Oliven und würzigem Feta-Käse bis zu zart gegrilltem Fisch und saftigem Gyros – Salz ist das Geheimnis hinter den authentischen Aromen des Mittelmeers, die unsere Gerichte so einzigartig machen. Erleben Sie die Essenz der griechisch-mediterranen Tradition in jedem delikaten Bissen.</p>
+
+            <div class="story-quote">
+                "Salz und Brot machen die Wangen rot" - Ein altes griechisches Sprichwort
+            </div>
+
+            <div class="story-quote">
+                "Ein Leben ohne Salz ist wie ein Leben ohne Würze" - Griechische Weisheit
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

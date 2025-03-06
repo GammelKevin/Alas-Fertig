@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block title %}Impressum - Restaurant ALAS{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="section-container">
+        <h1>Impressum</h1>
+        
+        <h2>Angaben gemäß § 5 TMG</h2>
+        <p>Restaurant ALAS<br>
+        Bundesstr. 39<br>
+        94554 Moos, Niederbayern</p>
+
+        <h2>Kontakt</h2>
+        <p>Telefon: 09938 2320307<br>
+        E-Mail: info@restaurant-alas.de</p>
+
+        <h2>Vertreten durch</h2>
+        <p>[Name des Geschäftsführers/Inhabers]</p>
+
+        <h2>Umsatzsteuer-ID</h2>
+        <p>Umsatzsteuer-Identifikationsnummer gemäß §27 a Umsatzsteuergesetz:<br>
+        [Ihre USt-IdNr.]</p>
+
+        <h2>Aufsichtsbehörde</h2>
+        <p>Bezirk Niederbayern<br>
+        Maximilianstraße 15<br>
+        84028 Landshut<br>
+        Postfach: 84023 Landshut<br>
+        Telefon: 0871 97512-100<br>
+        E-Mail: hauptverwaltung@bezirk-niederbayern.de</p>
+
+        <h2>Streitschlichtung</h2>
+        <p>Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: 
+        <a href="https://ec.europa.eu/consumers/odr/" target="_blank">https://ec.europa.eu/consumers/odr/</a><br>
+        Unsere E-Mail-Adresse finden Sie oben im Impressum.</p>
+
+        <h2>Haftung für Inhalte</h2>
+        <p>Als Diensteanbieter sind wir gemäß § 7 Abs.1 TMG für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 TMG sind wir als Diensteanbieter jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen.</p>
+    </div>
+</div>
+
+<style>
+    .content-container {
+        padding-top: 120px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding-bottom: 50px;
+    }
+
+    .section-container {
+        background: rgba(255, 255, 255, 0.95);
+        padding: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        font-family: 'Playfair Display', serif;
+        color: #333;
+        margin-bottom: 2rem;
+        font-size: 2.5rem;
+    }
+
+    h2 {
+        font-family: 'Playfair Display', serif;
+        color: #444;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-family: 'Poppins', sans-serif;
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+    }
+
+    a {
+        color: #c17817;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    a:hover {
+        color: #8b5711;
+    }
+</style>
+{% endblock %}

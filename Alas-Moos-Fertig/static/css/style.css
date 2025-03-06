@@ -1,0 +1,167 @@
+/* General Styles */
+:root {
+    --gold: #D4AF37;
+    --dark: #1A1A1A;
+    --light: #F5F5F5;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--dark);
+    background-color: var(--light);
+}
+
+/* Navigation */
+.navbar {
+    background-color: var(--dark);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: var(--gold) !important;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-link {
+    color: var(--light) !important;
+    transition: color 0.3s;
+}
+
+.nav-link:hover {
+    color: var(--gold) !important;
+}
+
+/* Hero Section */
+.hero {
+    background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                url('/static/images/hero.jpg') center/cover;
+    color: var(--light);
+    padding: 8rem 0;
+    text-align: center;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+.hero p {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+/* Menu Section */
+.menu-category {
+    margin-bottom: 3rem;
+}
+
+.menu-category h3 {
+    color: var(--dark);
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.menu-item-image {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-title {
+    color: var(--dark);
+    font-weight: 600;
+}
+
+.price {
+    color: var(--gold);
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+/* Opening Hours Section */
+#opening-hours .card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table td {
+    padding: 0.75rem;
+    vertical-align: middle;
+}
+
+/* Contact Section */
+#contact {
+    background-color: #f8f9fa;
+}
+
+#contact .card {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.card-text i {
+    color: var(--gold);
+    width: 25px;
+}
+
+/* Footer */
+footer {
+    background-color: var(--dark);
+    color: var(--light);
+    padding: 2rem 0;
+}
+
+/* Admin Panel Styles */
+.admin-section {
+    padding: 2rem;
+}
+
+.form-control:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+.btn-primary {
+    background-color: var(--gold);
+    border-color: var(--gold);
+}
+
+.btn-primary:hover {
+    background-color: darken(var(--gold), 10%);
+    border-color: darken(var(--gold), 10%);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .hero {
+        padding: 4rem 0;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero p {
+        font-size: 1.2rem;
+    }
+    
+    .menu-item-image {
+        height: 150px;
+    }
+}

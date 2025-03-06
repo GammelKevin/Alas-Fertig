@@ -1,0 +1,4 @@
+[2025-03-04 01:18:22] Starte Datenbank-Update...
+[2025-03-04 01:18:22] Datenbank-Backup erstellt: db_backups\restaurant_backup_20250304_011822.db
+[2025-03-04 01:18:22] Tabelle menu_category existiert nicht. Nichts zu tun.
+[2025-03-04 01:18:22] Datenbank-Update fehlgeschlagen.
